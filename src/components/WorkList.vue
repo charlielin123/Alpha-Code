@@ -41,45 +41,40 @@ onMounted(() => {
         <h2>{{ state.list.name }}</h2>
       </div>
       <template v-if="state.list?.cards?.length > 0">
-      <vue-draggable
-        group="todoList"
-        v-model="state.list.cards"
-        class="list"
-        ghost-class="ghost"
-        @start="drag = true"
-        @end="drag = false"
-        v-bind="{ animation: 200 }"
-      >
-        <transition-group type="transition" :name="!drag ? 'flip-list' : ''">
-          <div
-            v-for="element in state.list.cards"
-            :key="element.card.id"
-            class="item"
-            ref="itemRef"
-            :menu-id="element"
-            tabindex="-1"
-          >
-            <div class="name">
-              {{ element.card.name }}
+        <vue-draggable
+          group="todoList"
+          v-model="state.list.cards"
+          class="list"
+          ghost-class="ghost"
+          @start="drag = true"
+          @end="drag = false"
+          v-bind="{ animation: 200 }"
+        >
+          <transition-group type="transition" :name="!drag ? 'flip-list' : ''">
+            <div
+              v-for="element in state.list.cards"
+              :key="element.card.id"
+              class="item"
+              ref="itemRef"
+              :menu-id="element"
+              tabindex="-1"
+            >
+              <span class="name">
+                {{ element.card.name }}
+              </span>
             </div>
-          </div>
-        </transition-group>
-      </vue-draggable>
-    </template>
+          </transition-group>
+        </vue-draggable>
+      </template>
       <div class="item" v-if="addCardObj.adding">
-        <AutoFocusInInput
+        <textarea
+          v-focus
+          v-auto-height
           v-model="addCardObj.name"
-          @submit="addCard"
+          @keydown.enter.prevent="addCard"
           @blur="addCardObj.adding = false"
-          style="
-            width: 100%;
-            background-color: rgba(250, 235, 215, 0.362);
-            border: solid 0.5px;
-            border-radius: 0.2rem;
-            height: 1.7rem;
-            padding: 0 0.5rem;
-            font-size: 1.2rem;
-          "
+          placeholder="為這張卡片輸入標題..."
+          class="addBox item"
         />
       </div>
       <div
@@ -99,32 +94,64 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 $main-color: #ccc;
+$back-color: rgb(25, 25, 25, 0.9);
+$back-color2: rgb(100, 100, 100, 0.8);
+$back-color2-hover: rgb(100, 100, 100, 0.5);
+$text-color: #ededed;
 
 .container {
-  // padding: 0 0.5rem;
+  background-color: $back-color;
+  color: $text-color;
   margin: 2rem 1rem;
   border-radius: 0.5rem;
   border: solid 1px #ccc;
-  width: 15rem;
+  width: 18rem;
   overflow: hidden;
+  padding-top: 1rem;
   .head {
     h2 {
       text-align: center;
     }
-    background-color: $main-color;
+    // background-color: $main-color;
     padding: 0.2rem 0.5rem;
     width: 100%;
   }
+
   .item {
-    background-color: #ebebeb;
+    background-color: $back-color2;
     border-radius: 0.5rem;
     padding: 1rem 1rem;
     margin: 1rem 1rem;
-    position: relative;
+    display: flex;
+    font-size: 1.2rem;
+
     &:hover {
-      background-color: #ebebeba4;
+      background-color: $back-color2-hover;
+    }
+
+    &.addBox {
+      color: $text-color;
+      max-width: 100%;
+      background-color: rgba(0, 0, 0, 0);
+      border: none;
+      border-radius: 0.2rem;
+      overflow-wrap: anywhere;
+      resize: none;
+      margin: 0;
+      padding: 0;
+      max-height: 8rem;
+      &:focus,
+      &:active {
+        outline: none !important;
+      }
+      &::placeholder {
+        color: $text-color;
+      }
     }
   }
+}
+.name {
+  overflow-wrap: anywhere;
 }
 .flip-list-move {
   transition: transform 0.5s;

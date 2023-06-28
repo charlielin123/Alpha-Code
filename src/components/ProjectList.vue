@@ -37,6 +37,8 @@ const deleteItem = (id: number) => {
       menuItems.value = menuItems.value.filter((item) => item.id !== id)
     }
   })
+  fin1()
+
 }
 
 const list2: Ref<menuItem[]> = ref([])
@@ -68,11 +70,13 @@ onMounted(() => {
         項目列表<button ref="addBtnRef" @click="showAdd = !showAdd">＋</button>
       </div>
       <div class="add" v-if="showAdd">
-        <AutoFocusInInput v-model="addName" type="text" style="width: 80%" @submit="add" /><button
-          @click="add"
-        >
-          確認
-        </button>
+        <input
+          v-focus
+          @keydown.enter="add"
+          v-model="addName"
+          type="text"
+          style="width: 80%"
+        /><button @click="add">確認</button>
       </div>
     </div>
     <vue-draggable group="menu1" :list="menuItems" class="list" ghost-class="ghost" @end="fin1">
