@@ -66,15 +66,15 @@ onMounted(() => {
           </transition-group>
         </vue-draggable>
       </template>
-      <div class="item" v-if="addCardObj.adding">
+      <div class="item item2" v-if="addCardObj.adding">
         <textarea
           v-focus
           v-auto-height
           v-model="addCardObj.name"
           @keydown.enter.prevent="addCard"
-          @blur="addCardObj.adding = false"
+          @blur="()=>{if(addCardObj.name.length<=0)addCardObj.adding = false}"
           placeholder="為這張卡片輸入標題..."
-          class="addBox item"
+          class="addBox"
         />
       </div>
       <div
@@ -82,11 +82,13 @@ onMounted(() => {
         @click="
           () => {
             addCardObj.name = ''
-            addCardObj.adding = true
+            addCardObj.adding = !addCardObj.adding
           }
         "
       >
-        {{ !addCardObj.adding ? '新增卡片' : '取消' }}
+        <span class="name">
+          {{ !addCardObj.adding ? '新增卡片' : '取消' }}
+        </span>
       </div>
     </div>
   </div>
@@ -105,7 +107,7 @@ $text-color: #ededed;
   margin: 2rem 1rem;
   border-radius: 0.5rem;
   border: solid 1px #ccc;
-  width: 18rem;
+  width: 16rem;
   overflow: hidden;
   padding-top: 1rem;
   .head {
@@ -123,13 +125,18 @@ $text-color: #ededed;
     padding: 1rem 1rem;
     margin: 1rem 1rem;
     display: flex;
-    font-size: 1.2rem;
+    font-size: 1rem;
+    font-weight: bold;
+    
 
     &:hover {
       background-color: $back-color2-hover;
     }
-
-    &.addBox {
+    &.item2{
+      background-color: rgba(20, 20, 20, 0.2);
+      box-shadow: 0 0 1rem  rgba(255, 255, 255,0.5);
+    }
+    .addBox {
       color: $text-color;
       max-width: 100%;
       background-color: rgba(0, 0, 0, 0);

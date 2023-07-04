@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ProjectList from '@/components/ProjectList.vue'
 import WorkList from '@/components/WorkList.vue'
+import axios from 'axios';
 
 import { type ITrelloCard, type ICardList, CardList } from '@/components/Interface'
 import { onMounted, reactive } from 'vue'
@@ -19,8 +20,16 @@ const cards = [
 const list1: ICardList = new CardList('List1', cards)
 
 const addList = (name: string) => {
-  state.lists.push(new CardList(name, []))
+  const newList= new CardList(name, [])
+  state.lists.push(newList)
+  addAPI(newList).then((res) => {
+    console.log(res)
+  })
   state.addListName = ''
+}
+const addAPI=(newList:CardList)=>{
+  
+  return axios.post('http://localhost:3049/todolist',newList )
 }
 onMounted(() => {
   state.lists.push(list1)
@@ -38,7 +47,7 @@ onMounted(() => {
       </template>
       <div>
 
-        <div style="margin: 2rem 0" class="add">
+        <div style="margin: 2rem 0" class="add" :class="state.addListing?'active':''" >
           <div @click="state.addListing = true">+ 新增列表</div>
           <div v-if="state.addListing">
             <input
@@ -69,7 +78,10 @@ $text-color: #ededed;
   color: rgb(104, 117, 215);
   background-color: $back-color2-hover;
   border-radius: 0.5rem;
-  width: 18rem;
+  width: 16rem;
+  &.active{
+      background-color: $back-color;
+    }
   input{
     margin: 1rem 0;
     // height: 1.5rem;
@@ -77,9 +89,7 @@ $text-color: #ededed;
     width: 100%;
     padding: 0.2rem 0.5rem;
     border-radius: 0.2rem;
-    &.focus{
-      background-color: $;
-    }
+    
     &:focus{
       outline: rgb(71, 87, 208) ;
       border: 2px solid rgb(71, 87, 208);
