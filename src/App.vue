@@ -4,6 +4,7 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <RouterView />
+  <MessageUtil/>
 </template>
 
 <style lang="scss">

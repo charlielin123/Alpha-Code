@@ -1,34 +1,37 @@
 <script setup lang="ts">
-import { uuid, useDrag } from '@/compossible/Utils/tools'
-import { onMounted, reactive, ref, watch } from 'vue'
-import { VueDraggableNext as vueDraggable } from 'vue-draggable-next'
-import { type ITrelloCard, type ICardList } from '@/components/Interface'
-const { initDrag } = useDrag()
-const drag = ref(false)
+import { uuid, useDrag } from '@/compossible/Utils/tools';
+import { onMounted, reactive, ref, watch } from 'vue';
+import { VueDraggableNext as vueDraggable } from 'vue-draggable-next';
+import { type ITrelloCard, type ICardList } from '@/components/Interface';
+const { initDrag } = useDrag();
+const drag = ref(false);
 
 const state = reactive<{ list: ICardList }>({
   list: {} as ICardList
-})
+});
 const addCardObj = reactive({
   adding: false,
   name: ''
-})
-const { list } = defineProps<{ list: ICardList }>()
+});
+const { list } = defineProps<{ list: ICardList }>();
+const emit = defineEmits(['addCard']);
 
 const addCard = () => {
-  state.list.cards.push({
+  const card = {
     card: {
       id: uuid(),
       name: addCardObj.name
     }
-  })
+  };
+  state.list.cards.push(card);
+  emit('addCard', state.list);
   // addCardObj.adding = false
-  addCardObj.name = ''
-}
+  addCardObj.name = '';
+};
 
 onMounted(() => {
-  state.list = JSON.parse(JSON.stringify(list)) as ICardList
-})
+  state.list = JSON.parse(JSON.stringify(list)) as ICardList;
+});
 // watch(list, (newLost) => {
 //   state.list = JSON.parse(JSON.stringify(newLost)) as TrelloCard[]
 // })
@@ -72,7 +75,11 @@ onMounted(() => {
           v-auto-height
           v-model="addCardObj.name"
           @keydown.enter.prevent="addCard"
-          @blur="()=>{if(addCardObj.name.length<=0)addCardObj.adding = false}"
+          @blur="
+            () => {
+              if (addCardObj.name.length <= 0) addCardObj.adding = false;
+            }
+          "
           placeholder="為這張卡片輸入標題..."
           class="addBox"
         />
@@ -81,8 +88,8 @@ onMounted(() => {
         class="item"
         @click="
           () => {
-            addCardObj.name = ''
-            addCardObj.adding = !addCardObj.adding
+            addCardObj.name = '';
+            addCardObj.adding = !addCardObj.adding;
           }
         "
       >
@@ -127,14 +134,13 @@ $text-color: #ededed;
     display: flex;
     font-size: 1rem;
     font-weight: bold;
-    
 
     &:hover {
       background-color: $back-color2-hover;
     }
-    &.item2{
+    &.item2 {
       background-color: rgba(20, 20, 20, 0.2);
-      box-shadow: 0 0 1rem  rgba(255, 255, 255,0.5);
+      box-shadow: 0 0 1rem rgba(255, 255, 255, 0.5);
     }
     .addBox {
       color: $text-color;

@@ -1,66 +1,65 @@
 <script setup lang="ts">
-import { VueDraggableNext as vueDraggable } from 'vue-draggable-next'
+import { VueDraggableNext as vueDraggable } from 'vue-draggable-next';
 
-import { onMounted, ref, type Ref } from 'vue'
+import { onMounted, ref, type Ref } from 'vue';
 
 interface menuItem {
-  name: string
-  id: number
-  icon?: string
-  orderBy: number
+  name: string;
+  id: number;
+  icon?: string;
+  orderBy: number;
 }
-const menuItems: Ref<menuItem[]> = ref([] as menuItem[])
-const showAdd = ref(false)
-const itemRef: Ref<HTMLElement[] | []> = ref([])
-const addBtnRef: Ref<HTMLElement | null> = ref(null)
+const menuItems: Ref<menuItem[]> = ref([] as menuItem[]);
+const showAdd = ref(false);
+const itemRef: Ref<HTMLElement[] | []> = ref([]);
+const addBtnRef: Ref<HTMLElement | null> = ref(null);
 
-const addName = ref('')
+const addName = ref('');
 const add = () => {
-  if (!addName.value) return
+  if (!addName.value) return;
   menuItems.value.unshift({
     name: addName.value,
     id: Math.random(),
     orderBy: menuItems.value.length + 1
-  })
-  fin1()
-  addName.value = ''
-  showAdd.value = false
-  addBtnRef.value?.focus()
-}
-const hoverItem: Ref<Boolean[]> = ref([])
+  });
+  fin1();
+  addName.value = '';
+  showAdd.value = false;
+  addBtnRef.value?.focus();
+};
+const hoverItem: Ref<Boolean[]> = ref([]);
 const deleteItem = (id: number) => {
   itemRef.value?.forEach((item) => {
-    const menuId = Number.parseFloat(item.attributes.getNamedItem('menu-id')?.value ?? '')
+    const menuId = Number.parseFloat(item.attributes.getNamedItem('menu-id')?.value ?? '');
     if (menuId == id) {
-      const width = item.clientWidth + 10
-      item.style.transform = `translateX(${-width}px)`
-      menuItems.value = menuItems.value.filter((item) => item.id !== id)
+      const width = item.clientWidth + 10;
+      item.style.transform = `translateX(${-width}px)`;
+      menuItems.value = menuItems.value.filter((item) => item.id !== id);
     }
-  })
-  fin1()
+  });
+  fin1();
+};
 
-}
-
-const list2: Ref<menuItem[]> = ref([])
+const list2: Ref<menuItem[]> = ref([]);
 const fin1 = () => {
   setTimeout(() => {
-    list2.value = [...menuItems.value]
-  }, 2000)
-}
+    list2.value = [...menuItems.value];
+  }, 2000);
+};
 
 onMounted(() => {
   // 正常要在這取資料
-  const nameList = ['前端', '後端', '資料庫']
-  list2.value = menuItems.value
+  const nameList = ['前端', '後端', '資料庫'];
+  list2.value = menuItems.value;
 
   nameList.forEach((n) => {
     menuItems.value.push({
       name: n,
       id: Math.random(),
       orderBy: menuItems.value.length + 1
-    })
-  })
-})
+    });
+  });
+});
 </script>
 
 <template>
