@@ -13,57 +13,50 @@ const addCardObj = reactive({
   adding: false,
   name: ''
 });
-const { list } = defineProps<{ list: ICardList }>();
-const emit = defineEmits(['addCard']);
+const { list } = defineProps<{ list:{cards:[]} }>();
+const emit = defineEmits(['addCard','changeIndex']);
 
 const addCard = () => {
-  const card = {
-    card: {
-      id: uuid(),
-      name: addCardObj.name
-    }
-  };
-  state.list.cards.push(card);
-  emit('addCard', state.list);
+  emit('addCard', list._id,addCardObj.name);
   // addCardObj.adding = false
   addCardObj.name = '';
 };
 
 onMounted(() => {
-  state.list = JSON.parse(JSON.stringify(list)) as ICardList;
+  // state.list = JSON.parse(JSON.stringify(list)) as ICardList;
 });
-// watch(list, (newLost) => {
-//   state.list = JSON.parse(JSON.stringify(newLost)) as TrelloCard[]
-// })
+
+
 </script>
 
 <template>
   <div>
     <div class="container">
       <div class="head">
-        <h2>{{ state.list.name }}</h2>
+        <h2>{{ list.name }}</h2>
       </div>
-      <template v-if="state.list?.cards?.length > 0">
+      <template v-if="list.cards.length > 0">
         <vue-draggable
           group="todoList"
-          v-model="state.list.cards"
+          v-model="list.cards"
           class="list"
           ghost-class="ghost"
           @start="drag = true"
           @end="drag = false"
+          @change="emit('changeIndex',list)"
           v-bind="{ animation: 200 }"
         >
           <transition-group type="transition" :name="!drag ? 'flip-list' : ''">
             <div
-              v-for="element in state.list.cards"
-              :key="element.card.id"
+              v-for="element in list.cards"
+              :key="element._id"
               class="item"
               ref="itemRef"
               :menu-id="element"
               tabindex="-1"
             >
               <span class="name">
-                {{ element.card.name }}
+                {{ element.name }}
               </span>
             </div>
           </transition-group>

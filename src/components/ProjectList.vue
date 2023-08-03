@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { VueDraggableNext as vueDraggable } from 'vue-draggable-next';
 
-import { onMounted, ref, type Ref } from 'vue';
+import { onMounted, reactive, ref, type Ref, type UnwrapNestedRefs } from 'vue';
+import http from '@/compossible/Utils/http';
+import { useRoute, useRouter } from 'vue-router';
+
+const router = useRouter();
+const route = useRoute();
 
 interface menuItem {
   name: string;
@@ -13,52 +18,36 @@ const menuItems: Ref<menuItem[]> = ref([] as menuItem[]);
 const showAdd = ref(false);
 const itemRef: Ref<HTMLElement[] | []> = ref([]);
 const addBtnRef: Ref<HTMLElement | null> = ref(null);
+const missionsList: UnwrapNestedRefs<{ name?: string; _id: string }[]> = reactive([]);
 
 const addName = ref('');
 const add = () => {
   if (!addName.value) return;
-  menuItems.value.unshift({
-    name: addName.value,
-    id: Math.random(),
-    orderBy: menuItems.value.length + 1
+  http.post('/demo/newMission', { mission: { name: addName.value } }).then((res) => {
+    getMission();
+    addName.value=''
   });
-  fin1();
-  addName.value = '';
-  showAdd.value = false;
-  addBtnRef.value?.focus();
 };
 const hoverItem: Ref<Boolean[]> = ref([]);
-const deleteItem = (id: number) => {
-  itemRef.value?.forEach((item) => {
-    const menuId = Number.parseFloat(item.attributes.getNamedItem('menu-id')?.value ?? '');
-    if (menuId == id) {
-      const width = item.clientWidth + 10;
-      item.style.transform = `translateX(${-width}px)`;
-      menuItems.value = menuItems.value.filter((item) => item.id !== id);
-    }
-  });
-  fin1();
+const deleteItem = async (id: string) => {
+  const a = await http.delete('/demo/mission?id=' + id);
+  getMission();
+  console.log(a);
 };
 
-const list2: Ref<menuItem[]> = ref([]);
-const fin1 = () => {
-  setTimeout(() => {
-    list2.value = [...menuItems.value];
-  }, 2000);
+const getMission = async () => {
+  missionsList.length = 0;
+  const missions = (await http.get('/demo/mission')).data;
+  Object.assign(missionsList, missions);
+};
+
+const test = (e:string) => {
+  // route.
+  router.push({ query: { mId: e } });
 };
 
 onMounted(() => {
-  // 正常要在這取資料
-  const nameList = ['前端', '後端', '資料庫'];
-  list2.value = menuItems.value;
-
-  nameList.forEach((n) => {
-    menuItems.value.push({
-      name: n,
-      id: Math.random(),
-      orderBy: menuItems.value.length + 1
-    });
-  });
+  getMission();
 });
 </script>
 
@@ -78,27 +67,26 @@ onMounted(() => {
         /><button @click="add">確認</button>
       </div>
     </div>
-    <vue-draggable group="menu1" :list="menuItems" class="list" ghost-class="ghost" @end="fin1">
-      <transition-group type="transition" name="flip-list">
-        <div
-          v-for="(element, index) in list2"
-          :key="element.id"
-          class="item"
-          ref="itemRef"
-          :menu-id="element.id"
-          tabindex="-1"
-          @mouseenter="hoverItem[index] = true"
-          @mouseleave="hoverItem[index] = false"
-        >
-          <div class="name">
-            {{ element.name }}
-          </div>
-
-          <button class="delete" @click="deleteItem(element.id)" v-if="hoverItem[index]">D</button>
-          <!-- </div> -->
+    <div class="list">
+      <div
+        v-for="(element, index) in missionsList"
+        :key="element._id"
+        class="item"
+        ref="itemRef"
+        :menu-id="element._id"
+        tabindex="-1"
+        @mouseenter="hoverItem[index] = true"
+        @mouseleave="hoverItem[index] = false"
+        @click="test(element._id)"
+      >
+        <div class="name">
+          {{ element.name }}
         </div>
-      </transition-group>
-    </vue-draggable>
+
+        <button class="delete" @click="deleteItem(element._id)" v-if="hoverItem[index]">D</button>
+        <!-- </div> -->
+      </div>
+    </div>
   </div>
 </template>
 

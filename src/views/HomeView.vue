@@ -8,9 +8,9 @@ import Member from '@/components/header/Member.vue';
 import { useRoute, useRouter } from 'vue-router';
 import http from '@/compossible/Utils/http';
 
-let ws: customWebSocket;
 const route = useRoute();
 const router = useRouter();
+let ws: customWebSocket | null;
 
 const state = reactive<{ addListing: boolean; addListName: string; lists: ICardList[] }>({
   addListing: false,
@@ -19,39 +19,62 @@ const state = reactive<{ addListing: boolean; addListName: string; lists: ICardL
 });
 
 const addList = (name: string) => {
-  const newList = new CardList(name, []);
-  addAPI(newList);
-  state.addListName = '';
+  // const newList = new CardList(name, []);
+  addCardBox(name);
 };
-const addAPI = (newList: CardList) => {
-  ws.emit('listChange', newList);
+const addCardBox = (boxName: string) => {
+  if (!ws) return;
+  ws.emit('addCardBox', { boxName });
 };
 
-const cardListChange = (list: CardList) => {
-  console.log(list);
-  addAPI(list);
+const addCard = (boxId: string, cardName: string) => {
+  if (!ws) return;
+  ws.emit('addCard', { boxId, cardName });
 };
+const changeIndex = (list: []) => {
+  ws?.emit('changeIndex', list);
+};
+
 let first = true;
-onMounted(() => {
-  ws = initWs('localhost:8888/ws2');
-  ws.onmessage = async (e) => {
-    const data = JSON.parse(e.data);
-    Object.assign(state.lists, data);
-    await nextTick();
-    first = false;
-  };
-  watch(
-    state.lists,
-    () => {
-      if (!first) {
-        ws.send(JSON.stringify(state.lists));
+const wsEvent = [];
+function te1() {
+  if (!route.query.mId) return;
+  ws = initWs('localhost:8888/ws2?missionId=' + route.query.mId);
+  if (!ws) {
+    console.log('ws is empty');
+    return;
+  }
+  ws.on('addCardBox', (e: { cardBoxes: [] }) => {
+    state.lists = e.cardBoxes;
+    console.log(e);
+  });
+  ws.on('getMission', (e: { cardBoxes: [] }) => {
+    state.lists = e.cardBoxes;
+  });
+
+  ws.on('cardChange', (cardBox) => {
+    state.lists = state.lists.map((i) => {
+      if (i._id == cardBox._id) {
+        return cardBox;
       }
-    },
-    { deep: true }
-  );
+      return i;
+    });
+  });
+}
+
+watch(
+  () => route.query,
+  () => {
+    console.log('change');
+    ws?.close();
+    te1();
+  }
+);
+
+onMounted(() => {
+  te1();
 });
 </script>
-
 
 <template>
   <header><Member /></header>
@@ -61,7 +84,7 @@ onMounted(() => {
     </div>
     <div class="main">
       <template v-for="(list, index) in state.lists">
-        <work-list @add-card="cardListChange" :list="list" />
+        <work-list @add-card="addCard" :list="list" @change-index="changeIndex" />
       </template>
       <div>
         <div style="margin: 2rem 0" class="add" :class="state.addListing ? 'active' : ''">

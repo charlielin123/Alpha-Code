@@ -35,7 +35,7 @@ onMounted(() => {
       }
     "
   >
-    <div class="wrap1">
+    <div class="wrap1" :style="memberInfo.name?'cursor: pointer;':''" @click="()=>{if(memberInfo.name)logout()}">
       <div class="img">
         <img :src="memberInfo.image" alt="" v-if="memberInfo.image" />
       </div>
@@ -89,7 +89,7 @@ onMounted(() => {
   }
 }
 .wrap1 {
-  width: 8rem;
+  max-width: 15rem;
   height: 90%;
   display: flex;
   align-items: center;
@@ -107,7 +107,7 @@ onMounted(() => {
     }
   }
   .name {
-    max-width: 50px;
+    // max-width: 50px;
     align-items: center;
     display: flex;
     height: 75%;

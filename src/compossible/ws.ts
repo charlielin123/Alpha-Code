@@ -14,6 +14,7 @@ class CustomWebSocket extends WebSocket {
     this.listeners[event] = func;
   }
   onmessage = (e: MessageEvent<string>) => {
+    console.log('e');
     const obj = JSON.parse(e.data);
     if (obj.eventName) {
       this.listeners[obj.eventName](obj.payload);
@@ -25,23 +26,27 @@ class CustomWebSocket extends WebSocket {
 }
 
 const initWs = (url: string) => {
-  const mySocket = new WebSocket(`ws://${url}`) as customWebSocket;
+  const token = localStorage.getItem('token');
+  if (!token) return null;
+
+  const mySocket = new WebSocket(`ws://${url}`, encodeURI(token)) as customWebSocket;
   const listener: any = {};
 
   mySocket.emit = function (event: string, payload: object) {
-    const obj = { eventName: event, payload: payload };
+    const obj = { event, payload: payload };
     const reqStr = JSON.stringify(obj);
     console.log(reqStr);
     this.send(reqStr);
   };
+  mySocket.onmessage = (event) => {
+    const obj = JSON.parse(event.data);
+    console.log(obj)
+    if (obj.event) {
+      listener[obj.event](obj.payload);
+    }
+  };
   mySocket.on = (event: string, func: Function) => {
     listener[event] = func;
-    mySocket.onmessage = (event) => {
-      const obj = JSON.parse(event.data);
-      if (obj.eventName) {
-        listener[obj.eventName](obj.payload);
-      }
-    };
   };
 
   return mySocket;
