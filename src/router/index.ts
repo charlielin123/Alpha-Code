@@ -10,6 +10,11 @@ const router = createRouter({
       component: HomeView
     },
     {
+      path: '/:mId',
+      name: 'home2',
+      component: HomeView
+    },
+    {
       path: '/auth/google/callback',
       name: 'auth',
       component: () => import('@/views/Auth.vue')

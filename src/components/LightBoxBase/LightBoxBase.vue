@@ -2,15 +2,13 @@
 // @ts-check
 // 使用普通的 <script> 来声明选项
 export default {
-  inheritAttrs: false,
+  inheritAttrs: false
 };
 </script>
 <script setup>
 // @ts-check
 import { computed, onMounted, reactive, ref, watch, toRef } from 'vue';
 import { useMessage } from '@/components';
-import { useI18n } from 'vue-i18n';
-const { t } = useI18n();
 const { showMessage } = useMessage();
 
 const props = defineProps({
@@ -20,17 +18,17 @@ const props = defineProps({
   modelValue: {
     // type: Boolean,
     required: false,
-    default: false,
+    default: false
   },
   style: {
-    type: Object,
+    type: Object
   },
   /**
    * LightBoxBody的CSS
    */
   body_style: {
     required: false,
-    type: Object,
+    type: Object
   },
   /**
    * 關閉footer的關閉按鈕
@@ -38,7 +36,7 @@ const props = defineProps({
   dis_close_btn: {
     type: Boolean,
     required: false,
-    default: false,
+    default: false
   },
   /**
    * 關閉title的X按鈕
@@ -46,7 +44,7 @@ const props = defineProps({
   dis_close_icon: {
     type: Boolean,
     required: false,
-    default: false,
+    default: false
   },
   /**
    * 點選燈箱外是否關閉燈箱
@@ -54,7 +52,7 @@ const props = defineProps({
   backdrop: {
     type: Boolean,
     required: false,
-    default: false,
+    default: false
   },
   /**
    * 按ESC是否關閉燈箱
@@ -62,7 +60,7 @@ const props = defineProps({
   esc: {
     type: Boolean,
     required: false,
-    default: false,
+    default: false
   },
   /**
    * 關閉title的顯示
@@ -70,7 +68,7 @@ const props = defineProps({
   dis_title: {
     type: Boolean,
     required: false,
-    default: false,
+    default: false
   },
   /**
    * 關閉footer的顯示
@@ -78,7 +76,7 @@ const props = defineProps({
   dis_footer: {
     type: Boolean,
     required: false,
-    default: false,
+    default: false
   },
   /**
    * 能否拖動視窗
@@ -86,14 +84,14 @@ const props = defineProps({
   draggable: {
     type: Boolean,
     required: false,
-    default: false,
+    default: false
   },
   /**
    * 燈箱的z-index
    */
   zIndex: {
     type: Number,
-    required: false,
+    required: false
   },
   /**
    * 關閉視窗前執行的Function
@@ -101,8 +99,8 @@ const props = defineProps({
   beforeClose: {
     type: Function,
     required: false,
-    default: () => {},
-  },
+    default: () => {}
+  }
 });
 const modelValue = toRef(props, 'modelValue');
 
@@ -136,7 +134,7 @@ const clickOutside = (e) => {
   const animationKey = [
     { transform: 'scale(1)' },
     { transform: 'scale(1.02)' },
-    { transform: 'scale(1)' },
+    { transform: 'scale(1)' }
   ];
 
   if (props.backdrop) {
@@ -145,7 +143,7 @@ const clickOutside = (e) => {
     showMessage.warning('請先結束當前工作');
     modalElement.value?.animate(animationKey, {
       duration: 500,
-      iterations: 1,
+      iterations: 1
     });
   }
 };
@@ -171,11 +169,11 @@ const autoFocusIn = () => {
 const positionChange = ref({});
 const absoluteXY = {
   x: 0,
-  y: 0,
+  y: 0
 };
 const move = {
   x: 0,
-  y: 0,
+  y: 0
 };
 
 const dragEvent = reactive({
@@ -229,10 +227,7 @@ const dragEvent = reactive({
   dragStart(e) {
     absoluteXY.x = modalElement.value?.offsetLeft ?? 0;
     absoluteXY.y = modalElement.value?.offsetTop ?? 0;
-    if (
-      positionChange.value.width == '100%' &&
-      positionChange.value.height == '100%'
-    ) {
+    if (positionChange.value.width == '100%' && positionChange.value.height == '100%') {
       move.x = e.offsetX;
       move.y = e.offsetY;
     }
@@ -241,9 +236,9 @@ const dragEvent = reactive({
     positionChange.value.userSelect = 'none';
     outSideContainer.value.addEventListener('mousemove', dragEvent.dragging);
     document.addEventListener('mouseup', dragEvent.up, {
-      once: true,
+      once: true
     });
-  },
+  }
 });
 
 const propStyle = computed(() => {
@@ -265,7 +260,18 @@ watch(
 </script>
 
 <template>
-  <div ref="box" tabindex="-1" @keydown.esc="props.esc ? close : ''">
+  <div
+    ref="box"
+    tabindex="-1"
+    @keydown.esc="
+      () => {
+        if (esc) {
+          close();
+        }
+      }
+    "
+    v-focus
+  >
     <transition name="lightBox">
       <div
         class="outSideContainer"
@@ -274,7 +280,7 @@ watch(
         @click.self="clickOutside($event)"
         :style="outsideZIndex"
       >
-        <div class="lightBox" :="$attrs" :style="propStyle" ref="modalElement">
+        <div class="lightBox" :="$attrs" :style="propStyle" ref="modalElement" v-resize>
           <div
             class="header"
             v-if="!props.dis_title"
@@ -286,13 +292,9 @@ watch(
                 <slot name="title">{{ t('lightBoxBase.alert') }}</slot>
               </h4>
             </slot>
-            <button
-              class="btn-close"
-              v-if="!props.dis_close_icon"
-              @click="close"
-            ></button>
+            <button class="btn-close" v-if="!props.dis_close_icon" @click="close"></button>
           </div>
-          <div  style="margin-top: 0.5rem">
+          <div style="margin-top: 0.5rem">
             <slot name="navBox"></slot>
           </div>
           <div class="lightBoxBody" :style="body_style">
@@ -301,9 +303,7 @@ watch(
           <div class="footer" v-if="!dis_footer">
             <slot name="footer"> </slot>
 
-            <button @click="close" v-if="!props.dis_close_btn">
-              {{ t('lightBoxBase.close') }}
-            </button>
+            <button @click="close" v-if="!props.dis_close_btn">關閉</button>
           </div>
         </div>
       </div>

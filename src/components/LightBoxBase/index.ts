@@ -1,12 +1,16 @@
 import LightBoxBase from './LightBoxBase.vue';
 import { message_util } from '@/components/Message';
 import Message from '@/components/Message';
+import directive from '@/Directive';
 import {
   createApp,
   h,
   type VNode,
   ref,
-  onMounted
+  onMounted,
+  type DefineComponent,
+  type ConcreteComponent,
+  type Component
 } from 'vue';
 const timeOut = (time: number) => {
   return new Promise((resolve) => {
@@ -16,7 +20,7 @@ const timeOut = (time: number) => {
   });
 };
 
-const showLightBox = (lightbox: VNode, props: {[propName:string]:any}, name: string) => {
+const showLightBox = (lightbox: VNode|Component, props?: {[propName:string]:any}, name?: string) => {
   const show = ref(false);
   const rootReady = ref(false);
   const RootNode = {
@@ -31,6 +35,7 @@ const showLightBox = (lightbox: VNode, props: {[propName:string]:any}, name: str
           show.value = false;
           timeOut(300).then(() => {
             newApp.unmount();
+            element.remove()
           });
         }
       };
@@ -47,6 +52,7 @@ const showLightBox = (lightbox: VNode, props: {[propName:string]:any}, name: str
 
   newApp.provide('body', { a: 1, b: 2 });
   newApp.use(Message);
+  newApp.use(directive);
   const element = document.createElement('div', {});
   newApp.mount(element);
   document.body.appendChild(element);

@@ -4,48 +4,33 @@ interface customWebSocket extends WebSocket {
 }
 
 class CustomWebSocket extends WebSocket {
-  private listeners: { [props: string]: Function } = {};
+  public listeners: { [props: string]: Function } = {};
+  constructor(url: string, protocols?: string | string[] | undefined) {
+    super(url, protocols);
+    this.onmessage = (e: MessageEvent<string>) => {
+      console.log('e');
+      const obj = JSON.parse(e.data);
+      if (obj.event) {
+        this.listeners[obj.event](obj.payload);
+      }
+    };
+  }
   emit(event: string, payload: object) {
-    const obj = { eventName: event, payload: payload };
+    const obj = { event, payload };
     const reqStr = JSON.stringify(obj);
     this.send(reqStr);
   }
   on(event: string, func: Function) {
     this.listeners[event] = func;
   }
-  onmessage = (e: MessageEvent<string>) => {
-    const obj = JSON.parse(e.data);
-    if (obj.eventName) {
-      this.listeners[obj.eventName](obj.payload);
-    }
-  };
-  constructor(url: string) {
-    super(url);
-  }
 }
 
 const initWs = (url: string) => {
-  const mySocket = new WebSocket(`ws://${url}`) as customWebSocket;
-  const listener: any = {};
-
-  mySocket.emit = function (event: string, payload: object) {
-    const obj = { eventName: event, payload: payload };
-    const reqStr = JSON.stringify(obj);
-    console.log(reqStr);
-    this.send(reqStr);
-  };
-  mySocket.on = (event: string, func: Function) => {
-    listener[event] = func;
-    mySocket.onmessage = (event) => {
-      const obj = JSON.parse(event.data);
-      if (obj.eventName) {
-        listener[obj.eventName](obj.payload);
-      }
-    };
-  };
-
+  const token = localStorage.getItem('token');
+  if (!token) return null;
+  const mySocket = new CustomWebSocket(`ws://${url}`, encodeURI(token));
   return mySocket;
 };
 
 export { initWs };
-export type { customWebSocket };
+export type { customWebSocket ,};

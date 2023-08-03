@@ -61,7 +61,7 @@ export function useMessage() {
   /**
    * @type {{err:Function, warning:Function, info:Function}|undefined}
    */
-  const showMessage = inject(useMessageKey);
+  const showMessage = inject<{ err: Function; warning: Function; info: Function }>(useMessageKey);
   const list = inject(msgUtilListKey);
   return { showMessage, list };
 }
