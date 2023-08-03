@@ -27,6 +27,9 @@ const addList = () => {
 const addCardBox = (boxName: string) => {
   if (!ws) return;
   ws.emit('addCardBox', { boxName });
+const addCardBox = (boxName: string) => {
+  if (!ws) return;
+  ws.emit('addCardBox', { boxName });
 };
 
 const addCard = (boxId: string, cardName: string) => {
@@ -35,7 +38,14 @@ const addCard = (boxId: string, cardName: string) => {
 };
 const changeIndex = (list: []) => {
   ws?.emit('changeIndex', list);
+const addCard = (boxId: string, cardName: string) => {
+  if (!ws) return;
+  ws.emit('addCard', { boxId, cardName });
 };
+const changeIndex = (list: []) => {
+  ws?.emit('changeIndex', list);
+};
+
 
 let first = true;
 const wsEvent = [];
