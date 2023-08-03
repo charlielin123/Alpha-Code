@@ -2,6 +2,7 @@ import './assets/main.css';
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import { install } from '@/components';
+import directive from '@/Directive';
 import Message from '@/components/Message';
 
 import App from './App.vue';
@@ -13,5 +14,6 @@ app.use(createPinia());
 app.use(router);
 app.use(Message);
 app.use(install);
+app.use(directive);
 
 app.mount('#app');
