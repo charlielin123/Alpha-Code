@@ -7,11 +7,14 @@ import { nextTick, onMounted, reactive, watch } from 'vue';
 import Member from '@/components/header/Member.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useMessage } from '@/components';
+import { MissionIoInit } from '@/compossible/ioTest';
 
 const route = useRoute();
 const router = useRouter();
 let ws: customWebSocket | null;
-const {showMessage}=useMessage()
+const { showMessage } = useMessage();
+
+const { mission, getMissionById, addCard } = MissionIoInit();
 
 const state = reactive<{ addListing: boolean; addListName: string; lists: CardBox[] }>({
   addListing: false,
@@ -27,25 +30,15 @@ const addList = () => {
 const addCardBox = (boxName: string) => {
   if (!ws) return;
   ws.emit('addCardBox', { boxName });
-const addCardBox = (boxName: string) => {
-  if (!ws) return;
-  ws.emit('addCardBox', { boxName });
 };
 
-const addCard = (boxId: string, cardName: string) => {
-  if (!ws) return;
-  ws.emit('addCard', { boxId, cardName });
-};
-const changeIndex = (list: []) => {
-  ws?.emit('changeIndex', list);
-const addCard = (boxId: string, cardName: string) => {
-  if (!ws) return;
-  ws.emit('addCard', { boxId, cardName });
-};
+// const addCard = (boxId: string, cardName: string) => {
+//   if (!ws) return;
+//   ws.emit('addCard', { boxId, cardName });
+// };
 const changeIndex = (list: []) => {
   ws?.emit('changeIndex', list);
 };
-
 
 let first = true;
 const wsEvent = [];
@@ -64,7 +57,7 @@ function te1() {
     state.lists = e.cardBoxes;
   });
 
-  ws.on('cardChange', (cardBox:CardBox) => {
+  ws.on('cardChange', (cardBox: CardBox) => {
     state.lists = state.lists.map((i) => {
       if (i._id == cardBox._id) {
         return cardBox;
@@ -72,10 +65,10 @@ function te1() {
       return i;
     });
   });
-  ws.on('error', (e:any) => {
-    showMessage?.err(e.error)
-    showMessage?.err(e.message)
-  })
+  ws.on('error', (e: any) => {
+    showMessage?.err(e.error);
+    showMessage?.err(e.message);
+  });
 }
 
 watch(
@@ -83,12 +76,14 @@ watch(
   () => {
     console.log('change');
     ws?.close();
-    te1();
+    getMissionById(route.query.mId as string);
+    // te1();
   }
 );
 
 onMounted(() => {
-  te1();
+  // te1();
+  getMissionById(route.query.mId as string);
 });
 </script>
 
@@ -99,7 +94,7 @@ onMounted(() => {
       <ProjectList />
     </div>
     <div class="main">
-      <template v-for="(list, index) in state.lists">
+      <template v-for="(list, index) in mission.cardBoxes">
         <work-list @add-card="addCard" :list="list" @change-index="changeIndex" />
       </template>
       <div>

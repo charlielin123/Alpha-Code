@@ -14,10 +14,15 @@ const useMessageKey = Symbol('ct016_useMessage');
 const msgUtilListKey = Symbol('ct016_msgUtilList');
 // const message_util=MessageUtil;
 export const message_util = defineComponent(MessageUtil);
+type messageObject = {
+  message: string;
+  type: string;
+  key: number;
+};
 
 export default {
   install: (app: App) => {
-    const list = reactive<{ message: string; type: string; key: number }[]>([]);
+    const list = reactive<messageObject[]>([]);
     const err = (str: string) => {
       list.push({ message: str, type: 'error', key: Math.random() });
     };
@@ -62,6 +67,6 @@ export function useMessage() {
    * @type {{err:Function, warning:Function, info:Function}|undefined}
    */
   const showMessage = inject<{ err: Function; warning: Function; info: Function }>(useMessageKey);
-  const list = inject(msgUtilListKey);
+  const list = inject<messageObject[]>(msgUtilListKey)||[];
   return { showMessage, list };
 }

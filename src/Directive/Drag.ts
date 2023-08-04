@@ -1,4 +1,4 @@
-import type { DirectiveBinding, VNode } from "vue";
+import type { DirectiveBinding, VNode } from 'vue';
 
 /**
  *
@@ -6,7 +6,7 @@ import type { DirectiveBinding, VNode } from "vue";
  * @param {*} bind
  * @param {*} vNode
  */
-export default (el:HTMLInputElement, bind:DirectiveBinding, vNode:VNode) => {
+export default (el: HTMLInputElement, bind: DirectiveBinding, vNode: VNode) => {
   let dragging = false;
   let startX = 0;
   let startY = 0;
@@ -28,7 +28,8 @@ export default (el:HTMLInputElement, bind:DirectiveBinding, vNode:VNode) => {
   const borderTop = inner?.offsetTop || 0;
   const borderLeft = inner?.offsetLeft || 0;
 
-  const initDrag = (event:MouseEvent) => {
+  let f11 = false;
+  const initDrag = (event: MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
     dragging = true;
@@ -36,16 +37,22 @@ export default (el:HTMLInputElement, bind:DirectiveBinding, vNode:VNode) => {
     startY = event.clientY;
     startTop = el.offsetTop;
     startLeft = el.offsetLeft;
+    if (f11 ) {
+      // startX = el.offsetLeft;
+      // startY = el.offsetTop;
+      startTop = event.clientY;
+      startLeft = event.clientX;
+    }
+
     document.addEventListener('mousemove', drag);
     document.addEventListener('mouseup', stopDrag);
   };
-  let f11 = false;
   /**
    *
    * @param {MouseEvent} event
    * @returns
    */
-  const drag = (event:MouseEvent) => {
+  const drag = (event: MouseEvent) => {
     if (!dragging) return;
 
     const deltaX = event.clientX - startX;
@@ -53,10 +60,10 @@ export default (el:HTMLInputElement, bind:DirectiveBinding, vNode:VNode) => {
     if (f11 && deltaY > 0) {
       el.style.width = startWidth + 'px';
       el.style.height = startHeight + 'px';
-      startX = event.clientX;
-      startY = event.clientY;
-      startTop = event.clientY;
-      startLeft = event.clientX;
+      // startX = event.clientX;
+      // startY = event.clientY;
+      // startTop = event.clientY;
+      // startLeft = event.clientX;
       f11 = false;
       return;
     }
@@ -68,9 +75,9 @@ export default (el:HTMLInputElement, bind:DirectiveBinding, vNode:VNode) => {
     }
     if (top <= 10) {
       top = 0;
-      // el.style.width = maxWidth + 'px';
-      // el.style.height = maxHeight + 'px';
-      // f11 = true;
+      el.style.width = '100vw';
+      el.style.height = '100vh';
+      f11 = true;
     }
     if (left <= 10) {
       left = 0;
@@ -91,6 +98,6 @@ export default (el:HTMLInputElement, bind:DirectiveBinding, vNode:VNode) => {
 
   dragBar.addEventListener('mousedown', initDrag);
 };
-const plusPx = (a:number) => {
+const plusPx = (a: number) => {
   return a + 'px';
 };

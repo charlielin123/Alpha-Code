@@ -1,11 +1,11 @@
-<script>
+<script lang="ts">
 // @ts-check
 // 使用普通的 <script> 来声明选项
 export default {
   inheritAttrs: false
 };
 </script>
-<script setup>
+<script setup lang="ts">
 // @ts-check
 import { computed, onMounted, reactive, ref, watch, toRef } from 'vue';
 import { useMessage } from '@/components';
@@ -100,6 +100,11 @@ const props = defineProps({
     type: Function,
     required: false,
     default: () => {}
+  },
+  title:{
+    type: String,
+    required: false
+    
   }
 });
 const modelValue = toRef(props, 'modelValue');
@@ -117,20 +122,20 @@ defineExpose({ close });
  * element
  * @type {import('vue').Ref<HTMLElement|null>}
  */
-const box = ref(null);
+const box = ref<HTMLElement|null>(null);
 /**
  * @type {import('vue').Ref<HTMLElement|null>}
  */
-const modalElement = ref(null);
+const modalElement = ref<HTMLElement|null>(null);
 /**
  * @type {import('vue').Ref<HTMLElement|null>}
  */
-const outSideContainer = ref(null);
+const outSideContainer = ref<HTMLElement|null>(null);
 /**
  * 點擊燈箱外觸發
  * 如果有prop backdrop 則關閉視窗
  */
-const clickOutside = (e) => {
+const clickOutside = (e: MouseEvent) => {
   const animationKey = [
     { transform: 'scale(1)' },
     { transform: 'scale(1.02)' },
@@ -140,7 +145,7 @@ const clickOutside = (e) => {
   if (props.backdrop) {
     close();
   } else {
-    showMessage.warning('請先結束當前工作');
+    showMessage?.warning('請先結束當前工作');
     modalElement.value?.animate(animationKey, {
       duration: 500,
       iterations: 1
@@ -163,87 +168,13 @@ const autoFocusIn = () => {
   }
 };
 
-/**
- * @type {import('vue').Ref<{left?:string,top?:string,width?:string,height?:string,userSelect?:string,maxWidth?:string,maxHeight?:string}>}
- */
-const positionChange = ref({});
-const absoluteXY = {
-  x: 0,
-  y: 0
-};
-const move = {
-  x: 0,
-  y: 0
-};
 
-const dragEvent = reactive({
-  up() {
-    outSideContainer.value.removeEventListener('mousemove', dragEvent.dragging);
-  },
-  dragging(e) {
-    if (e.clientX == 0 || e.clientY == 0) {
-      return;
-    }
-    let x = absoluteXY.x + e.clientX - move.x;
-    let y = absoluteXY.y + e.clientY - move.y;
-    const width = modalElement.value?.clientWidth;
-    const vw = outSideContainer.value?.clientWidth;
-    const height = modalElement.value?.clientHeight;
-    const vh = outSideContainer.value?.clientHeight;
-    if (y <= vw * 0.01) {
-      y = 0;
-      // this.test.width = '100%';
-      // this.test.height = '100%';
-      positionChange.value.width = '100%';
-      positionChange.value.height = '100%';
-      positionChange.value.maxWidth = '100vw';
-      positionChange.value.maxHeight = '100vh';
-    } else {
-      // delete this.test.width;
-      // delete this.test.height;
-      delete positionChange.value.maxWidth;
-      delete positionChange.value.maxHeight;
-      delete positionChange.value.width;
-      delete positionChange.value.height;
-    }
-    if (x <= vh * 0.01) {
-      x = 0;
-    }
-    if (vw && width && x + 30 >= vw - width) {
-      x = vw - width;
-    }
-    if (vh && height && y + 30 >= vh - height) {
-      y = vh - height;
-    }
-    // this.test.left = `${x}px`;
-    // this.test.top = `${y}px`;
-    positionChange.value.left = `${x}px`;
-    positionChange.value.top = `${y}px`;
-  },
-  /**
-   *
-   * @param {MouseEvent} e
-   */
-  dragStart(e) {
-    absoluteXY.x = modalElement.value?.offsetLeft ?? 0;
-    absoluteXY.y = modalElement.value?.offsetTop ?? 0;
-    if (positionChange.value.width == '100%' && positionChange.value.height == '100%') {
-      move.x = e.offsetX;
-      move.y = e.offsetY;
-    }
-    move.x = e.clientX;
-    move.y = e.clientY;
-    positionChange.value.userSelect = 'none';
-    outSideContainer.value.addEventListener('mousemove', dragEvent.dragging);
-    document.addEventListener('mouseup', dragEvent.up, {
-      once: true
-    });
-  }
-});
+
+
 
 const propStyle = computed(() => {
   const style = props.style?.value ?? props.style;
-  return { ...style, ...positionChange.value };
+  return { ...style };
 });
 
 onMounted(() => {
@@ -253,7 +184,7 @@ onMounted(() => {
 watch(
   () => props.modelValue,
   () => {
-    positionChange.value = {};
+    // positionChange.value = {};
     autoFocusIn();
   }
 );
@@ -280,16 +211,14 @@ watch(
         @click.self="clickOutside($event)"
         :style="outsideZIndex"
       >
-        <div class="lightBox" :="$attrs" :style="propStyle" ref="modalElement" v-resize>
+        <div class="lightBox" :="$attrs" :style="propStyle" ref="modalElement" v-resize v-drag="'.dragTrigger'">
           <div
-            class="header"
+            class="header dragTrigger"
             v-if="!props.dis_title"
-            @mousedown="draggable ? dragEvent.dragStart($event) : ''"
-            :style="draggable ? 'cursor: move;' : ''"
           >
             <slot name="header">
-              <h4 class="title">
-                <slot name="title">{{ t('lightBoxBase.alert') }}</slot>
+              <h4 class="title ">
+                <slot name="title">{{ props.title }}</slot>
               </h4>
             </slot>
             <button class="btn-close" v-if="!props.dis_close_icon" @click="close"></button>

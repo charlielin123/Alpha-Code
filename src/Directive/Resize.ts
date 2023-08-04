@@ -1,3 +1,4 @@
+import { type } from 'os';
 import type { DirectiveBinding, VNode } from 'vue';
 
 export default (el: HTMLInputElement, bind: DirectiveBinding, vNode: VNode) => {
@@ -44,8 +45,10 @@ export default (el: HTMLInputElement, bind: DirectiveBinding, vNode: VNode) => {
     ele.classList.add(ref[i]);
     ele.addEventListener('mousedown', initResize);
     const mixCss: { [key: string]: string } = { ...resizeHandle, ...style[ref[i]] };
+    type aa = keyof typeof ele.style;
+
     for (const key in mixCss) {
-      ele.style[key] = mixCss[key];
+      ele.style[key as aa] = mixCss[key];
     }
     el.appendChild(ele);
   }

@@ -14,13 +14,14 @@ type Card = {
 type CardBox = {
   _id: string;
   name: string;
+  owner: User;
   cards: Card[];
   mission: Mission;
 };
-type mission = {
+type Mission = {
   _id: string;
   name: string;
-  owner: User;
+  owner: User|null;
   editor?: User[];
   cardBoxes?: CardBox[];
 };

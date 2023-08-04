@@ -1,9 +1,16 @@
 import type { App } from 'vue';
-import { initWs } from './ws';
+import {io} from 'socket.io-client';
+
 
 export default {
   install(app: App) {
-    const ws = initWs('localhost:8888/ws');
-    app.provide('ws', ws);
+    console.log('install massage dialog ');
+    const socket = io('ws://localhost:8888',{path:'/ws'});
+
+    socket.on('connect', () => {
+      console.log('ws on connected');
+    })
+
+    app.provide('io', socket);
   }
 };
