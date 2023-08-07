@@ -9,6 +9,7 @@ import {
   type ComponentOptionsBase
 } from 'vue';
 import Message from '@/components/Message';
+import Directive from '@/Directive';
 
 interface NObject {
   [key: string]: any;
@@ -192,7 +193,7 @@ function setBtn3({ label, listenerName, param, todo, close }: DialogReq) {
  * 預設title為'警告'
  * @param {string|{title:string,message:string}|{statusCode:string,message:string}} obj 參數可以給string或是{title:'標題', message:'訊息'}
  */
-function showAlert(obj: string | { title: string; message: string; statusCode: string } | VNode) {
+function showAlert(obj: string | { title?: string; message?: string; statusCode?: string } | VNode) {
   clear();
   if (typeof obj == 'string') {
     messageDialogObj.message = obj;
@@ -223,6 +224,7 @@ const msgDialogPlugins = {
       msgDialog: messageDialogObj,
       dialogFunctions: dialogFunctions
     });
+    newApp.use(Directive)
     newApp.use(Message);
     const element = document.createElement('div');
     newApp.mount(element);
@@ -253,7 +255,7 @@ export const showConfirmDialog = (
 };
 
 export const testAlert = (
-  obj: string | { title: string; message: string; statusCode: string } | VNode
+  obj: string | { title?: string; message?: string; statusCode?: string } | VNode
 ) => {
   const dialogObj = reactive(new MessageDialog());
   if (typeof obj == 'string') {
@@ -412,6 +414,7 @@ const createDialog = (
     }
   });
   newApp.use(Message);
+  newApp.use(Directive);
   const element = document.createElement('div');
   newApp.mount(element);
   document.body.appendChild(element);

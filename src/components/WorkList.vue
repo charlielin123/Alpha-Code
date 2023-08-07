@@ -2,31 +2,32 @@
 import { inject, onMounted, reactive, ref, watch } from 'vue';
 import { VueDraggableNext as vueDraggable } from 'vue-draggable-next';
 import { type ITrelloCard, type ICardList } from '@/components/Interface';
-import { showCardModel } from '@/components/LightBox';
+// import { showCardModel } from '@/components/LightBox';
 import type { customWebSocket } from '@/compossible/ws';
+import CardLightBox from '@/components/LightBox/CardLightBox.vue';
 
 const drag = ref(false);
-
-const state = reactive<{ list: ICardList }>({
-  list: {} as ICardList
-});
 const addCardObj = reactive({
   adding: false,
   name: ''
 });
+
+const cardModal = reactive<{ display: boolean; card: Card | null }>({ display: false, card: null });
+
 const { list } = defineProps<{ list: CardBox }>();
 const emit = defineEmits(['addCard', 'changeIndex']);
 
+const showCardModel = (card: Card) => {
+  cardModal.display = true;
+  card.content=card?.content??'';
+
+  cardModal.card = card;
+};
 const addCard = () => {
   emit('addCard', list._id, addCardObj.name);
   // addCardObj.adding = false
   addCardObj.name = '';
 };
-  
-const ws = inject<customWebSocket>('ws');
-ws?.on('alert', () => {
-  alert();
-});
 </script>
 
 <template>
@@ -97,6 +98,8 @@ ws?.on('alert', () => {
       </div>
     </div>
   </div>
+
+  <CardLightBox v-model:card="cardModal.card" v-model="cardModal.display" />
 </template>
 
 <style lang="scss" scoped>

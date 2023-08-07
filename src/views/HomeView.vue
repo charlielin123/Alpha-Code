@@ -8,13 +8,14 @@ import Member from '@/components/header/Member.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useMessage } from '@/components';
 import { MissionIoInit } from '@/compossible/ioTest';
+import CardLightBox from '@/components/LightBox/CardLightBox.vue';
 
 const route = useRoute();
 const router = useRouter();
 let ws: customWebSocket | null;
 const { showMessage } = useMessage();
 
-const { mission, getMissionById, addCard } = MissionIoInit();
+const { mission, getMissionById, addCard, addCardBox, changeIndex } = MissionIoInit();
 
 const state = reactive<{ addListing: boolean; addListName: string; lists: CardBox[] }>({
   addListing: false,
@@ -23,22 +24,13 @@ const state = reactive<{ addListing: boolean; addListName: string; lists: CardBo
 });
 
 const addList = () => {
-  // const newList = new CardList(name, []);
   addCardBox(state.addListName);
   state.addListName = '';
 };
-const addCardBox = (boxName: string) => {
-  if (!ws) return;
-  ws.emit('addCardBox', { boxName });
-};
 
-// const addCard = (boxId: string, cardName: string) => {
-//   if (!ws) return;
-//   ws.emit('addCard', { boxId, cardName });
+// const changeIndex = (list: []) => {
+//   ws?.emit('changeIndex', list);
 // };
-const changeIndex = (list: []) => {
-  ws?.emit('changeIndex', list);
-};
 
 let first = true;
 const wsEvent = [];

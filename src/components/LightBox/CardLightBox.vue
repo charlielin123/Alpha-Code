@@ -1,32 +1,51 @@
 <script setup lang="ts">
 import { LightBoxBase } from '@/components';
-import { ref } from 'vue';
-const { card } = defineProps<{ card?: Card }>();
+import { MissionIoInit } from '@/compossible/ioTest';
+import { computed, reactive, ref, toRef, watch } from 'vue';
+const { card } = defineProps<{ card?: Card | null }>();
 const datePicker = ref<null | HTMLInputElement>(null);
+const { editCard } = MissionIoInit();
+const mirrorCard = reactive<Card>({} as Card);
+watch(
+  () => card,
+  () => {
+    Object.assign(mirrorCard, card);
+  }
+);
+const a = computed({
+  get() {
+    return mirrorCard?.content;
+  },
+  set(val) {
+    mirrorCard.content = val;
+  }
+});
 </script>
 
 <template>
-  <LightBoxBase esc >
-    <template #header>{{ card?.name }}</template>
+  <LightBoxBase esc>
+    <template #header>{{ mirrorCard?.name }}</template>
     <template #body>
       <div class="cardOut">
-        <textarea name="" id="" cols="30" rows="10" placeholder="請輸入內容">
-          {{ card?.content }} 
+        <textarea v-model="a" name="" id="" cols="30" rows="10" placeholder="請輸入內容">
         </textarea>
         <div>
-          <p>期限：{{ card?.dueDate }}</p>
+          <p>期限：{{ mirrorCard?.dueDate }}</p>
           <button
             @click="
               () => {
-                datePicker?.showPicker()
+                datePicker?.showPicker();
               }
             "
           >
             修改
-            <input type="date" name="" id="test" ref="datePicker" v-show="false"/>
+            <input type="date" name="" id="test" ref="datePicker" v-show="false" />
           </button>
         </div>
       </div>
+    </template>
+    <template #footer>
+      <button @click="card ? editCard(mirrorCard) : ''">存檔</button>
     </template>
   </LightBoxBase>
 </template>
@@ -42,7 +61,5 @@ const datePicker = ref<null | HTMLInputElement>(null);
 textarea {
   padding: 0.5rem 1rem;
   resize: none;
-
 }
-
 </style>
