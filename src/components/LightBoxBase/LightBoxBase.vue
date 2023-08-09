@@ -7,10 +7,10 @@ export default {
 </script>
 <script setup lang="ts">
 // @ts-check
-import { computed, onMounted, reactive, ref, watch, toRef } from 'vue';
+import { computed, onMounted, reactive, ref, watch, toRef, inject, type Ref } from 'vue';
 import { useMessage } from '@/components';
-const { showMessage } = useMessage();
 
+const { showMessage } = useMessage();
 const props = defineProps({
   /**
    * 燈箱開關
@@ -101,10 +101,9 @@ const props = defineProps({
     required: false,
     default: () => {}
   },
-  title:{
+  title: {
     type: String,
     required: false
-    
   }
 });
 const modelValue = toRef(props, 'modelValue');
@@ -122,15 +121,15 @@ defineExpose({ close });
  * element
  * @type {import('vue').Ref<HTMLElement|null>}
  */
-const box = ref<HTMLElement|null>(null);
+const box = ref<HTMLElement | null>(null);
 /**
  * @type {import('vue').Ref<HTMLElement|null>}
  */
-const modalElement = ref<HTMLElement|null>(null);
+const modalElement = ref<HTMLElement | null>(null);
 /**
  * @type {import('vue').Ref<HTMLElement|null>}
  */
-const outSideContainer = ref<HTMLElement|null>(null);
+const outSideContainer = ref<HTMLElement | null>(null);
 /**
  * 點擊燈箱外觸發
  * 如果有prop backdrop 則關閉視窗
@@ -167,10 +166,6 @@ const autoFocusIn = () => {
     box.value?.focus();
   }
 };
-
-
-
-
 
 const propStyle = computed(() => {
   const style = props.style?.value ?? props.style;
@@ -211,13 +206,17 @@ watch(
         @click.self="clickOutside($event)"
         :style="outsideZIndex"
       >
-        <div class="lightBox" :="$attrs" :style="propStyle" ref="modalElement" v-resize v-drag="'.dragTrigger'">
-          <div
-            class="header dragTrigger"
-            v-if="!props.dis_title"
-          >
+        <div
+          class="lightBox"
+          :="$attrs"
+          :style="propStyle"
+          ref="modalElement"
+          v-resize
+          v-drag="'.dragTrigger'"
+        >
+          <div class="header dragTrigger" v-if="!props.dis_title">
             <slot name="header">
-              <h4 class="title ">
+              <h4 class="title">
                 <slot name="title">{{ props.title }}</slot>
               </h4>
             </slot>
@@ -229,7 +228,7 @@ watch(
           <div class="lightBoxBody" :style="body_style">
             <slot name="body"></slot>
           </div>
-          <div class="footer" v-if="!dis_footer">
+          <div justify="end" class="footer" v-if="!dis_footer">
             <slot name="footer"> </slot>
 
             <button @click="close" v-if="!props.dis_close_btn">關閉</button>
@@ -318,7 +317,7 @@ watch(
       border-top: 1px solid #dee2e6;
       border-bottom-right-radius: calc(0.3rem - 1px);
       border-bottom-left-radius: calc(0.3rem - 1px);
-      button {
+      .button {
         color: #fff;
         margin: 0.25rem;
         background-color: #6c757d;

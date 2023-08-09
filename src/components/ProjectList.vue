@@ -1,13 +1,9 @@
 <script setup lang="ts">
-import { VueDraggableNext as vueDraggable } from 'vue-draggable-next';
-
 import { onMounted, reactive, ref, type Ref, type UnwrapNestedRefs } from 'vue';
 import http from '@/compossible/Utils/http';
 import { useRoute, useRouter } from 'vue-router';
 
 const router = useRouter();
-const route = useRoute();
-
 interface menuItem {
   name: string;
   id: number;

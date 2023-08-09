@@ -7,7 +7,9 @@ import { nextTick, onMounted, reactive, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useMessage } from '@/components';
 import { MissionIoInit } from '@/compossible/ioTest';
-import CardLightBox from '@/components/LightBox/CardLightBox.vue';
+import { useOsTheme, darkTheme } from 'naive-ui'
+
+const osThemeRef = useOsTheme()
 
 const route = useRoute();
 const router = useRouter();
@@ -152,11 +154,13 @@ header {
 }
 .sideBar {
   height: 100%;
-  width: 19rem;
+  width: 320px;
 }
 .main {
   height: 100%;
-  width: calc(100vw - 19rem);
+  width: calc(100vw - 320px);
   display: flex;
+  overflow-x: auto;
+  overflow-y: auto;
 }
 </style>
