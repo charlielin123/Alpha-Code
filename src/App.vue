@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import rootVue from './views/root.vue';
 </script>
 
 <template>
-  <RouterView />
-  <MessageUtil/>
+  <rootVue />
+  <MessageUtil />
 </template>
 
 <style lang="scss">
-
-
 
 </style>

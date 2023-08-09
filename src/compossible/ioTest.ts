@@ -54,6 +54,7 @@ export const MissionIoInit = () => {
   };
 
   const getMissionById = (mId: string) => {
+    if(!mId) return;
     io?.emit('/mission/joinRoom', mId);
   };
 

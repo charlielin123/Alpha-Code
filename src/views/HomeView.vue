@@ -4,7 +4,6 @@ import WorkList from '@/components/WorkList.vue';
 import { initWs, type customWebSocket } from '@/compossible/ws';
 import { type ITrelloCard, type ICardList, CardList } from '@/components/Interface';
 import { nextTick, onMounted, reactive, watch } from 'vue';
-import Member from '@/components/header/Member.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useMessage } from '@/components';
 import { MissionIoInit } from '@/compossible/ioTest';
@@ -80,7 +79,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <header><Member /></header>
   <div class="wrap">
     <div class="sideBar">
       <ProjectList />

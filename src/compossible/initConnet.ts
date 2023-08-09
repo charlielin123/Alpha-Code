@@ -7,7 +7,7 @@ export default {
   install(app: App) {
     console.log('install massage dialog ');
     const socket = io('ws://localhost:8888', { path: '/ws' });
-    const { showMessage } = useMessage();
+    // const { showMessage } = useMessage();
 
     socket.on('connect', () => {
       console.log('ws on connected');

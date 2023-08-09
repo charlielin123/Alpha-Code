@@ -18,6 +18,11 @@ const router = createRouter({
       path: '/auth/google/callback',
       name: 'auth',
       component: () => import('@/views/Auth.vue')
+    },
+    {
+      path: '/test',
+      name: 'T1',
+      component: () => import('@/views/Test.vue')
     }
   ]
 });
