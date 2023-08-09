@@ -29,11 +29,6 @@ const addList = () => {
   state.addListName = '';
 };
 
-// const changeIndex = (list: []) => {
-//   ws?.emit('changeIndex', list);
-// };
-
-let first = true;
 const wsEvent = [];
 function te1() {
   if (!route.query.mId) return;

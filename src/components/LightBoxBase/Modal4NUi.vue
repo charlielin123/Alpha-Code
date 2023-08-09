@@ -19,7 +19,7 @@ const lightBox = ref();
       <NSpace>
         <slot name="footer"></slot>
 
-        <n-button @click="lightBox.close()">關閉</n-button>
+        <n-button strong secondary type="error" @click="lightBox.close()">關閉</n-button>
       </NSpace>
     </template>
   </LightBoxBase>

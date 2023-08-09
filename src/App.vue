@@ -7,7 +7,7 @@ provide('theme', theme);
 </script>
 
 <template>
-  <n-config-provider :theme="theme">【
+  <n-config-provider :theme="theme">
     <rootVue />
     <MessageUtil />
   </n-config-provider>

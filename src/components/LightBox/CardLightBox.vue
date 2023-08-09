@@ -3,20 +3,28 @@
 import LightBoxBase from '@/components/LightBoxBase/Modal4NUi.vue';
 import { MissionIoInit } from '@/compossible/ioTest';
 import { computed, reactive, ref, toRef, watch, type Ref, type UnwrapRef } from 'vue';
-import { NButton, NDatePicker, type GlobalTheme, useThemeVars } from 'naive-ui';
+import { NButton, NDatePicker, NInput, type GlobalTheme, useThemeVars } from 'naive-ui';
 const { card } = defineProps<{ card?: Card | null }>();
-const datePicker = ref<null | HTMLInputElement>(null);
 const { editCard } = MissionIoInit();
 const mirrorCard = reactive<Card>({} as Card);
 
 const theme = useThemeVars();
 
+function clearProps(this: { [key: string]: any }) {
+  for (const key in this) {
+    this[key] = null;
+  }
+}
+
 watch(
   () => card,
   () => {
+    clearProps.call(mirrorCard);
     Object.assign(mirrorCard, card);
   }
 );
+
+const canEdit = ref(false);
 const a = computed({
   get() {
     return mirrorCard?.content;
@@ -25,12 +33,16 @@ const a = computed({
     mirrorCard.content = val;
   }
 });
-const b = computed<Date | undefined>({
+const b = computed<number | undefined>({
   get() {
-    return mirrorCard?.dueDate;
+    if (!mirrorCard?.dueDate) return undefined;
+    const date = new Date(mirrorCard?.dueDate);
+    return date.getTime();
   },
   set(val) {
-    mirrorCard.dueDate = val;
+    if (!val) return;
+    const d = new Date(val);
+    mirrorCard.dueDate = d;
   }
 });
 </script>
@@ -40,58 +52,55 @@ const b = computed<Date | undefined>({
     <template #header>{{ mirrorCard?.name }}</template>
     <template #body>
       <div class="cardOut">
-        <textarea
-          v-model="a"
-          name=""
-          id=""
-          cols="30"
-          rows="10"
+        <p>詳細內容：</p>
+        <n-input
+          v-model:value="a"
+          type="textarea"
           placeholder="請輸入內容"
-          :style="{
-            backgroundColor: theme.modalColor,
-            borderColor: theme.borderColor,
-            borderRadius: theme.borderRadius,
-            color: theme.textColor2,
-            fontSize: theme.fontSizeLarge
-          }"
-        >
-        </textarea>
-
-        <n-date-picker v-model:value="b" type="date" />
-        <!-- <div>
-          <p>期限：{{ mirrorCard?.dueDate }}</p>
-          <button
-            @click="
-              () => {
-                datePicker?.showPicker();
-              }
-            "
-          >
-            修改
-            <input type="date" name="" id="test" ref="datePicker" v-show="false" v-model="b" />
-          </button>
-        </div> -->
+          style="height: 18rem"
+          :disabled="!canEdit"
+          @click="canEdit = true"
+          @blur="
+            () => {
+              canEdit = false;
+              editCard(mirrorCard)
+            }
+          "
+          :resizable="false"
+          title="點擊以編輯"
+        />
+        <p>期限：</p>
+        <n-date-picker v-model:value="b" @update:value="" />
       </div>
     </template>
     <template #footer>
-      <n-button class="btn-gray" @click="card ? editCard(mirrorCard) : ''">存檔</n-button>
+      <!-- <n-button
+        class="btn-gray"
+        type="primary"
+        strong
+        secondary
+        @click="card ? editCard(mirrorCard) : ''"
+        >存檔</n-button
+      > -->
     </template>
   </LightBoxBase>
 </template>
 
 <style lang="scss" scoped>
 .cardOut {
-  width: 20rem;
-  height: 15rem;
+  padding: 0.5rem 0;
+  min-width: 32rem;
+  width: 100%;
+  min-height: 35rem;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   flex-direction: column;
+  .textarea {
+    height: 99rem;
+  }
 }
-textarea {
-  padding: 0.5rem 1rem;
-  resize: none;
-}
+
 .btn-gray {
-  background-color: --alpha-gray;
+  background-color: --alpha-gray !important;
 }
 </style>

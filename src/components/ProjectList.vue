@@ -42,8 +42,9 @@ const test = (e:string) => {
   router.push({ query: { mId: e } });
 };
 
-onMounted(() => {
-  getMission();
+onMounted(async () => {
+  await getMission();
+  router.push({ path: '/',query: { mId: missionsList[0]._id } });
 });
 </script>
 

@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
 import http from '@/compossible/Utils/http';
-import { useThemeVars, NPopover, NSpace } from 'naive-ui';
+import { useThemeVars, NPopover, NSpace, NDivider } from 'naive-ui';
 import { useMessage } from '..';
 const { showMessage } = useMessage();
 const nStyle = useThemeVars();
+
+
 const borderColor = computed(() => {
-  return nStyle.value.warningColorSuppl;
+  return nStyle.value.primaryColor;
 });
+
+
 const { maxHeight = '100px' } = defineProps<{ maxHeight?: string }>();
 const memberInfo = reactive({
   name: '',
@@ -49,15 +53,7 @@ onMounted(() => {
   <n-popover :show-arrow="false" trigger="hover" :disabled="!memberInfo.name">
     <template #trigger>
       <div class="container">
-        <div
-          class="wrap1"
-          :style="memberInfo.name ? 'cursor: pointer;' : ''"
-          @click="
-            () => {
-              if (memberInfo.name) logout();
-            }
-          "
-        >
+        <div class="wrap1" :style="memberInfo.name ? 'cursor: pointer;' : ''">
           <div class="img">
             <img :src="memberInfo.image" alt="" v-if="memberInfo.image" />
           </div>
@@ -75,10 +71,12 @@ onMounted(() => {
       </div>
     </template>
 
-    <n-space  class="list" v-for="item in selectOption">
-      <div class="item">
-        <button @click="item.func">{{ item.label }}</button>
-      </div>
+    <n-space vertical class="list">
+      <template v-for="item in selectOption">
+        <div class="item">
+          <button @click="item.func">{{ item.label }}</button>
+        </div>
+      </template>
     </n-space>
   </n-popover>
 </template>
@@ -92,15 +90,21 @@ onMounted(() => {
   justify-content: center;
 }
 .list {
-  background-color: rgba(0, 0, 0, 0.8);
-  color: rgb(255, 174, 0);
+  background-color: v-bind('nStyle.baseColor');
+  // background-color: rgba(0, 0, 0, 0.8);
+  color: v-bind('nStyle.textColor1');
   width: 8rem;
   border-radius: 0.1rem;
-  border: rgb(253, 136, 1) solid 0.5px;
+  // border: rgb(253, 136, 1) solid 0.5px;
   .item {
     text-align: center;
+    border-bottom: 2px solid;
+    border-color: orange;
+    // border-color: var(--warning-color);
     button {
-      color: rgb(255, 174, 0);
+      // color: rgb(255, 174, 0);
+      color: v-bind('nStyle.textColor1');
+      font-size: 1rem;
       background-color: rgba(0, 0, 0, 0);
       border: none;
       cursor: pointer;
@@ -114,9 +118,10 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   padding: 0 0.5rem;
-  border: solid 0.2rem;
+  border: solid 0.12rem;
   border-color: v-bind('borderColor');
   border-radius: 50rem;
+  margin: 0 0.5rem;
 
   .img {
     height: 75%;
@@ -131,7 +136,8 @@ onMounted(() => {
     align-items: center;
     display: flex;
     height: 75%;
-    color: wheat;
+    // color: wheat;
+    color: v-bind('nStyle.warningColor');
     margin-left: 0.5rem;
   }
 }

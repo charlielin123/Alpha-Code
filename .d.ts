@@ -6,10 +6,11 @@ declare module '*.vue' {
 }
 
 type Card = {
+  [props:string]:any;
   _id: string;
   name: string;
   content?: string;
-  dueDate?: Date;
+  dueDate?: string|Date;
 };
 type CardBox = {
   _id: string;

@@ -3,7 +3,9 @@ import { h, inject, ref, type Ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import Member from '@/components/header/Member.vue';
 import type { GlobalTheme } from 'naive-ui/es/config-provider/src/interface';
-import { darkTheme, NButton, NEl, NSwitch } from 'naive-ui';
+import { darkTheme, NButton, NEl, NSwitch,useThemeVars } from 'naive-ui';
+
+const nStyle = useThemeVars();
 
 const theme = inject<Ref<GlobalTheme | null>>('theme');
 
@@ -25,7 +27,7 @@ const func = () => {
 </script>
 
 <template>
-  <NEl tag="header" ref="header">
+  <header ref="header">
     <navItem name="Home" to="T1" />
     <NSwitch
       @update-value="
@@ -38,8 +40,7 @@ const func = () => {
       <template #unchecked>淺色</template>
     </NSwitch>
     <Member />
-
-  </NEl>
+  </header>
 </template>
 
 <style lang="scss" scoped>
@@ -52,16 +53,17 @@ $header-height: 3rem;
 
 header {
   // background-color: var(--alpha-gray);
-  background-color: var(--base-color);
+  background-color: v-bind('nStyle.baseColor');
   height: $header-height;
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  // padding: 0 1rem;
+  border-bottom: solid 2px v-bind('nStyle.primaryColor');
+  box-shadow: v-bind('nStyle.boxShadow1');
 }
 
 .nav-item {
-  color: var(--text-color-2);
+  color: v-bind('nStyle.textColor1');
   font-size: 1.2rem;
   padding: 1rem;
   // background-color: var(--popover-color);
