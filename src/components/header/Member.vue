@@ -118,10 +118,11 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   padding: 0 0.5rem;
-  border: solid 0.12rem;
+  border: solid 0.15rem;
   border-color: v-bind('borderColor');
   border-radius: 50rem;
   margin: 0 0.5rem;
+  background-color: v-bind('nStyle.avatarColor');
 
   .img {
     height: 75%;
@@ -137,7 +138,8 @@ onMounted(() => {
     display: flex;
     height: 75%;
     // color: wheat;
-    color: v-bind('nStyle.warningColor');
+    color: v-bind('nStyle.textColor1');
+    // font-family: v-bind('nStyle.fontFamily');  
     margin-left: 0.5rem;
   }
 }
