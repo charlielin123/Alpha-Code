@@ -5,15 +5,19 @@ import { useRoute, useRouter } from 'vue-router';
 import qs from 'query-string';
 
 const route = useRoute();
-const router=useRouter();
+const router = useRouter();
 
 onMounted(async () => {
-  const query=route.query
-  const queryStr=qs.stringify(query)
-  const res = await http.get('/auth/google/callback?' + queryStr) ;
-  localStorage.setItem('token', res.data);
+  const query = route.query;
+  const queryStr = qs.stringify(query);
+  const res = await http.get('/auth/google/callback?' + queryStr);
+  if (res.data?.token) {
+    localStorage.setItem('token', res.data.token);
+  }
+  if (res.data?.error) {
+    console.error(res.data?.error)
+  }
   window.location.href = '/';
-  // router.push('/');
 });
 </script>
 

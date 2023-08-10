@@ -52,7 +52,6 @@ $text-color: #ededed;
 $header-height: 3rem;
 
 header {
-  // background-color: var(--alpha-gray);
   background-color: v-bind('nStyle.baseColor');
   height: $header-height;
   display: flex;
@@ -66,7 +65,6 @@ header {
   color: v-bind('nStyle.textColor1');
   font-size: 1.2rem;
   padding: 1rem;
-  // background-color: var(--popover-color);
   cursor: pointer;
   a {
     text-decoration: none;
