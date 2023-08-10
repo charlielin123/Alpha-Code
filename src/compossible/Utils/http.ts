@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const http = axios.create({
   baseURL: 'http://localhost:8888', // 基础请求地址
-  timeout: 10000, // 请求超时设置
+  timeout: 20000, // 请求超时设置
   withCredentials: false, // 跨域请求是否需要携带 cookie
   headers: {
     'Content-Type': 'application/json; charset=utf-8',

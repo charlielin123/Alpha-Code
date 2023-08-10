@@ -21,7 +21,7 @@ const add = () => {
   if (!addName.value) return;
   http.post('/demo/newMission', { mission: { name: addName.value } }).then((res) => {
     getMission();
-    addName.value=''
+    addName.value = '';
   });
 };
 const hoverItem: Ref<Boolean[]> = ref([]);
@@ -37,14 +37,15 @@ const getMission = async () => {
   Object.assign(missionsList, missions);
 };
 
-const test = (e:string) => {
-  // route.
+const changeMission = (e: string) => {
   router.push({ query: { mId: e } });
 };
 
 onMounted(async () => {
   await getMission();
-  router.push({ path: '/',query: { mId: missionsList[0]._id } });
+  if (missionsList[0]?._id) {
+    router.push({ path: '/', query: { mId: missionsList[0]._id } });
+  }
 });
 </script>
 
@@ -74,7 +75,7 @@ onMounted(async () => {
         tabindex="-1"
         @mouseenter="hoverItem[index] = true"
         @mouseleave="hoverItem[index] = false"
-        @click="test(element._id)"
+        @click="changeMission(element._id)"
       >
         <div class="name">
           {{ element.name }}
