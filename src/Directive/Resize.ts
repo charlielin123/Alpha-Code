@@ -48,7 +48,7 @@ export default (el: HTMLInputElement, bind: DirectiveBinding, vNode: VNode) => {
     type aa = keyof typeof ele.style;
 
     for (const key in mixCss) {
-      ele.style[key as aa] = mixCss[key];
+      ele.style.setProperty(key, mixCss[key]);
     }
     el.appendChild(ele);
   }
