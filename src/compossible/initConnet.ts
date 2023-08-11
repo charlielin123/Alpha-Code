@@ -6,7 +6,7 @@ import { showAlert, testAlert } from '@/components/useMessageDialog';
 export default {
   install(app: App) {
     console.log('install massage dialog ');
-    const socket = io('ws://localhost:8888', { path: '/ws' });
+    const socket = io(process.env.WS_URL, { path: '/ws' });
     // const { showMessage } = useMessage();
 
     socket.on('connect', () => {

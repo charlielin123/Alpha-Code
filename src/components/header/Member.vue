@@ -61,7 +61,7 @@ onMounted(() => {
             <h5>
               {{ memberInfo.name }}
             </h5>
-            <a href="http://localhost:8888/auth/google" v-if="!memberInfo.name">
+            <a :href="process.env.BACKEND_URL'+/auth/google'" v-if="!memberInfo.name">
               <h5>
                 {{ '登入' }}
               </h5>

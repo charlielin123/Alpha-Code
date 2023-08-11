@@ -5,6 +5,7 @@ declare module '*.vue' {
   export default componentOptions;
 }
 
+
 type Card = {
   [props:string]:any;
   _id: string;
