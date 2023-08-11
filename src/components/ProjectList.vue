@@ -44,7 +44,7 @@ const changeMission = (e: string) => {
 onMounted(async () => {
   await getMission();
   if (missionsList[0]?._id) {
-    router.push({ path: '/', query: { mId: missionsList[0]._id } });
+    router.push({ path: '/missionBroad/', query: { mId: missionsList[0]._id } });
   }
 });
 </script>
@@ -101,7 +101,7 @@ onMounted(async () => {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: rgba(71, 218, 71, 0.75);
+  background-color: rgba(71, 218, 71, 0.35) !important;
   .top {
     width: 100%;
     // height: 50px;

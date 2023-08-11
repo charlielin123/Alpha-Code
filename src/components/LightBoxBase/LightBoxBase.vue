@@ -222,9 +222,7 @@ watch(
             </slot>
             <button class="btn-close" v-if="!props.dis_close_icon" @click="close"></button>
           </div>
-          <div style="margin-top: 0.5rem">
-            <slot name="navBox"></slot>
-          </div>
+
           <div class="lightBoxBody" :style="body_style">
             <slot name="body"></slot>
           </div>

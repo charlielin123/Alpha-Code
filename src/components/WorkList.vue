@@ -5,6 +5,8 @@ import { type ITrelloCard, type ICardList } from '@/components/Interface';
 // import { showCardModel } from '@/components/LightBox';
 import type { customWebSocket } from '@/compossible/ws';
 import CardLightBox from '@/components/LightBox/CardLightBox.vue';
+import { useThemeVars } from 'naive-ui';
+const nStyle=useThemeVars();
 
 const drag = ref(false);
 const addCardObj = reactive({
@@ -19,7 +21,7 @@ const emit = defineEmits(['addCard', 'changeIndex']);
 
 const showCardModel = (card: Card) => {
   cardModal.display = true;
-  card.content=card?.content??'';
+  card.content = card?.content ?? '';
 
   cardModal.card = card;
 };
@@ -110,14 +112,19 @@ $back-color2-hover: rgb(100, 100, 100, 0.5);
 $text-color: #ededed;
 
 .container {
-  background-color: $back-color;
+  background-color: v-bind('nStyle.primaryColor');
+  backdrop-filter:opacity(0.8);
+  // background-color: $back-color;
+  box-shadow:0 1px 1rem 1px $back-color2-hover  ;
   color: $text-color;
   margin: 2rem 1rem;
   border-radius: 0.5rem;
-  border: solid 1px #ccc;
+  // border: solid 1px #ccc;
   width: 16rem;
   overflow: hidden;
   padding-top: 1rem;
+  // -webkit-filter: blur(3px);
+  backdrop-filter: blur(10px);
   .head {
     h2 {
       text-align: center;

@@ -63,14 +63,14 @@ const b = computed<number | undefined>({
           @blur="
             () => {
               canEdit = false;
-              editCard(mirrorCard)
+              editCard(mirrorCard);
             }
           "
           :resizable="false"
           title="點擊以編輯"
         />
         <p>期限：</p>
-        <n-date-picker v-model:value="b" @update:value="" />
+        <n-date-picker v-model:value="b" @update:value【="editCard(mirrorCard)" />
       </div>
     </template>
     <template #footer>

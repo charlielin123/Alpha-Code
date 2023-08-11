@@ -7,10 +7,8 @@ import { nextTick, onMounted, reactive, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useMessage } from '@/components';
 import { MissionIoInit } from '@/compossible/ioTest';
-import { useOsTheme, darkTheme } from 'naive-ui'
-
-const osThemeRef = useOsTheme()
-
+import { useThemeVars } from 'naive-ui';
+const nStyle = useThemeVars();
 const route = useRoute();
 const router = useRouter();
 let ws: customWebSocket | null;
@@ -25,7 +23,8 @@ const state = reactive<{ addListing: boolean; addListName: string; lists: CardBo
 });
 
 const addList = () => {
-  addCardBox(state.addListName);
+  // console.log(state.addListName,mission._id)
+  addCardBox(state.addListName, mission._id);
   state.addListName = '';
 };
 
@@ -107,6 +106,7 @@ $back-color2: rgb(100, 100, 100, 0.8);
 $back-color2-hover: rgb(100, 100, 100, 0.5);
 $text-color: #ededed;
 $header-height: 3rem;
+$sidebar-width: 16rem;
 header {
   background-color: $back-color;
   height: $header-height;
@@ -145,15 +145,16 @@ header {
 }
 .wrap {
   height: calc(100vh - $header-height);
+  background-color: v-bind('nStyle.modalColor');
   display: flex;
 }
 .sideBar {
   height: 100%;
-  width: 320px;
+  width: $sidebar-width;
 }
 .main {
   height: 100%;
-  width: calc(100vw - 320px);
+  width: calc(100vw - $sidebar-width);
   display: flex;
   overflow-x: auto;
   overflow-y: auto;

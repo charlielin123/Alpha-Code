@@ -2,23 +2,46 @@ import { useMessage } from '@/components';
 import type { Socket } from 'socket.io-client';
 import { inject, reactive } from 'vue';
 
-export const MissionIoInit = () => {
-  const io = inject<Socket>('io');
-  const { showMessage } = useMessage();
+let io: Socket | null = null;
 
-  const mission = reactive<Mission>({} as Mission);
+const mission = reactive<Mission>({} as Mission);
+
+export const MissionIoInit = () => {
+  if(!io){
+    io = inject<Socket>('io') ?? null;
+    setListener();
+  }
+  const addCard = (boxId: string, cardName: string) => {
+    io?.emit('/mission/addCard', { boxId, cardName });
+  };
+  const addCardBox = (boxName: string, mId: string) => {
+    console.log(boxName, mId);
+    io?.emit('/mission/addCardBox', { boxName, mId });
+  };
+
+  const getMissionById = (mId: string) => {
+    if (!mId) return;
+    io?.emit('/mission/joinRoom', mId);
+  };
+
+  const editCard = (card: Card) => {
+    io?.emit('/mission/changeCard', card);
+  };
+  const changeIndex = (list: CardBox) => {
+    io?.emit('/mission/changeIndex', list);
+  };
+
+  return { mission, io, getMissionById, addCard, editCard, addCardBox, changeIndex };
+};
+
+const setListener = () => {
+  const { showMessage } = useMessage();
   io?.on('message', (message) => {
     showMessage?.info(message);
   });
   io?.on('getMission', (res: Mission) => {
-    // mission._id='';
-    // mission.name='';
-    // mission.owner=null;
-    // mission.editor=[];
-    // mission.cardBoxes=[];
     Object.assign(mission, res);
   });
-
   io?.on('getCardBox', (res: CardBox) => {
     mission.cardBoxes?.map((item: CardBox) => {
       if (item._id == res._id) {
@@ -36,7 +59,6 @@ export const MissionIoInit = () => {
       });
     });
   });
-
   io?.on('cardChange', (cardBox: CardBox) => {
     mission.cardBoxes = mission.cardBoxes?.map((i) => {
       if (i._id == cardBox._id) {
@@ -45,25 +67,4 @@ export const MissionIoInit = () => {
       return i;
     });
   });
-
-  const addCard = (boxId: string, cardName: string) => {
-    io?.emit('/mission/addCard', { boxId, cardName });
-  };
-  const addCardBox = (boxName: string) => {
-    io?.emit('/mission/addCardBox', { boxName });
-  };
-
-  const getMissionById = (mId: string) => {
-    if(!mId) return;
-    io?.emit('/mission/joinRoom', mId);
-  };
-
-  const editCard = (card: Card) => {
-    io?.emit('/mission/changeCard', card);
-  };
-  const changeIndex = (list: CardBox) => {
-    io?.emit('/mission/changeIndex', list);
-  };
-
-  return { mission, io, getMissionById, addCard, editCard, addCardBox, changeIndex };
 };

@@ -28,7 +28,8 @@ const func = () => {
 
 <template>
   <header ref="header">
-    <navItem name="Home" to="T1" />
+    <navItem name="Home" to="home" />
+    <navItem name="任務看板" to="missionBroad" />
     <NSwitch
       @update-value="
         () => {
