@@ -161,28 +161,12 @@ const outsideZIndex = computed(() => {
   }
   return '';
 });
-const autoFocusIn = () => {
-  if (props.modelValue && box.value instanceof HTMLElement) {
-    box.value?.focus();
-  }
-};
 
 const propStyle = computed(() => {
   const style = props.style?.value ?? props.style;
   return { ...style };
 });
 
-onMounted(() => {
-  autoFocusIn();
-});
-
-watch(
-  () => props.modelValue,
-  () => {
-    // positionChange.value = {};
-    autoFocusIn();
-  }
-);
 </script>
 
 <template>
