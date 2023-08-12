@@ -11,6 +11,7 @@ onMounted(async () => {
   const query = route.query;
   const queryStr = qs.stringify(query);
   const res = await http.get('/auth/google/callback?' + queryStr);
+  
   if (res.data?.token) {
     localStorage.setItem('token', res.data.token);
   }

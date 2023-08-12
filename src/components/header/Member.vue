@@ -41,6 +41,7 @@ const logout = () => {
 
 onMounted(() => {
   const localToken = localStorage.getItem('token');
+  console.log(localToken);
   if (localToken) {
     http.get('/member').then((res) => {
       memberInfo.name = res.data.name;
