@@ -18,7 +18,7 @@ onMounted(async () => {
   if (res.data?.error) {
     console.error(res.data?.error)
   }
-  window.location.href = '/';
+  router.push("/")
 });
 </script>
 
