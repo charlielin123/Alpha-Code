@@ -11,6 +11,7 @@ const borderColor = computed(() => {
   return nStyle.value.primaryColor;
 });
 
+const authUrl=process.env.BACKEND_URL+'/auth/google'
 
 const { maxHeight = '100px' } = defineProps<{ maxHeight?: string }>();
 const memberInfo = reactive({
@@ -61,7 +62,7 @@ onMounted(() => {
             <h5>
               {{ memberInfo.name }}
             </h5>
-            <a :href="process.env.BACKEND_URL'+/auth/google'" v-if="!memberInfo.name">
+            <a :href="authUrl" v-if="!memberInfo.name">
               <h5>
                 {{ '登入' }}
               </h5>
