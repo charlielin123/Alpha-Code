@@ -5,13 +5,14 @@ declare module '*.vue' {
   export default componentOptions;
 }
 
+declare var process: { env: Record<string, string> };
 
 type Card = {
-  [props:string]:any;
+  [props: string]: any;
   _id: string;
   name: string;
   content?: string;
-  dueDate?: string|Date;
+  dueDate?: string | Date;
 };
 type CardBox = {
   _id: string;
@@ -23,7 +24,7 @@ type CardBox = {
 type Mission = {
   _id: string;
   name: string;
-  owner: User|null;
+  owner: User | null;
   editor?: User[];
   cardBoxes?: CardBox[];
 };
