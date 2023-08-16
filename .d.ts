@@ -4,7 +4,7 @@ declare module '*.vue' {
   const componentOptions: ComponentOptions;
   export default componentOptions;
 }
-
+declare var process: NodeJS.Process;
 
 type Card = {
   [props:string]:any;

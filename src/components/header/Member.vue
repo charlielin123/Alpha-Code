@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import http from '@/compossible/Utils/http';
 import { useThemeVars, NPopover, NSpace, NDivider } from 'naive-ui';
 import { useMessage } from '..';
+import { useRoute } from 'vue-router';
+const route = useRoute();
 const { showMessage } = useMessage();
 const nStyle = useThemeVars();
-
 
 const borderColor = computed(() => {
   return nStyle.value.primaryColor;
 });
 
-const authUrl=process.env.BACKEND_URL+'/auth/google'
+const authUrl = process.env.BACKEND_URL + '/auth/google';
 
 const { maxHeight = '100px' } = defineProps<{ maxHeight?: string }>();
 const memberInfo = reactive({
@@ -38,10 +39,21 @@ const logout = () => {
   memberInfo.image = '';
   memberInfo.name = '';
 };
+watch(route, () => {
+  const localToken = localStorage.getItem('token');
+  if (localToken && !memberInfo.name) {
+    http.get('/member').then((res) => {
+      memberInfo.name = res.data.name;
+      memberInfo.image = res.data.image;
+      if(res.data.status != 0){
+        
+      }
+    });
+  }
+});
 
 onMounted(() => {
   const localToken = localStorage.getItem('token');
-  console.log(localToken);
   if (localToken) {
     http.get('/member').then((res) => {
       memberInfo.name = res.data.name;
@@ -141,7 +153,7 @@ onMounted(() => {
     height: 75%;
     // color: wheat;
     color: v-bind('nStyle.textColor1');
-    // font-family: v-bind('nStyle.fontFamily');  
+    // font-family: v-bind('nStyle.fontFamily');
     margin-left: 0.5rem;
   }
 }
