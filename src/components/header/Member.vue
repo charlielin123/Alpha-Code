@@ -4,9 +4,9 @@ import http from '@/compossible/Utils/http';
 import { useThemeVars, NPopover, NSpace, NDivider } from 'naive-ui';
 import { useMessage } from '..';
 import { useRoute } from 'vue-router';
-const route = useRoute();
 const { showMessage } = useMessage();
 const nStyle = useThemeVars();
+const route = useRoute();
 
 const borderColor = computed(() => {
   return nStyle.value.primaryColor;
@@ -45,8 +45,7 @@ watch(route, () => {
     http.get('/member').then((res) => {
       memberInfo.name = res.data.name;
       memberInfo.image = res.data.image;
-      if(res.data.status != 0){
-        
+      if (res.data.status != 0) {
       }
     });
   }
@@ -54,7 +53,7 @@ watch(route, () => {
 
 onMounted(() => {
   const localToken = localStorage.getItem('token');
-  if (localToken) {
+  if (localToken && !memberInfo.name) {
     http.get('/member').then((res) => {
       memberInfo.name = res.data.name;
       memberInfo.image = res.data.image;
