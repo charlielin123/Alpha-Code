@@ -2,6 +2,7 @@ import input from './Input';
 import drag from './Drag';
 import resize from './Resize';
 import autoHeight from './autoHeight';
+import clickOutSide from './clickOutSide';
 import type { App, Directive } from 'vue';
 const focus = {
   mounted: (el: HTMLElement) => {
@@ -14,7 +15,8 @@ const list: { [key: string]: Directive } = {
   drag,
   resize,
   autoHeight,
-  focus
+  focus,
+  clickOutSide
 };
 
 export default {
