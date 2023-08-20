@@ -39,20 +39,27 @@ export default (el: HTMLInputElement, bind: DirectiveBinding, vNode: VNode) => {
     'bottomLeft',
     'bottomRight'
   ];
-  el.style.position = 'absolute';
+  el.style.position = 'fixed';
+  let wrap = document.createElement('div');
+  wrap.style.position = 'absolute';
+  wrap.style.top = '0';
+  wrap.style.left = '0';
+  wrap.style.setProperty('width', '100%');
+  wrap.style.setProperty('height', '100%');
+  wrap.style.setProperty('z-index', '-1');
+
   for (let i = 0; i < ref.length; i++) {
     let ele = document.createElement('div');
     ele.classList.add(ref[i]);
     ele.addEventListener('mousedown', initResize);
     const mixCss: { [key: string]: string } = { ...resizeHandle, ...style[ref[i]] };
-    type aa = keyof typeof ele.style;
 
     for (const key in mixCss) {
       ele.style.setProperty(key, mixCss[key]);
     }
-    el.appendChild(ele);
+    wrap.appendChild(ele);
   }
-
+  el.appendChild(wrap);
   const resize = (event: MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
@@ -61,8 +68,8 @@ export default (el: HTMLInputElement, bind: DirectiveBinding, vNode: VNode) => {
     const deltaY = event.clientY - startY;
     const eStyle = el.style;
     const topAction = () => {
-      eStyle.top = '';
       eStyle.bottom = plusPx(windowHeight - startHeight - startTop);
+      eStyle.top = '';
       eStyle.height = plusPx(startHeight - deltaY);
     };
     const bottomAction = () => {
@@ -188,6 +195,7 @@ const bottomRight = {
   right: '-5px',
   cursor: 'nwse-resize'
 };
+
 const style: { [key: string]: { [key: string]: string } } = {
   top,
   right,
