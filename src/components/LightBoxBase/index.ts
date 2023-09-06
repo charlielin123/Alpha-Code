@@ -19,7 +19,6 @@ const timeOut = (time: number) => {
     }, time);
   });
 };
-
 const showLightBox = (lightbox: VNode|Component, props?: {[propName:string]:any}, name?: string) => {
   const show = ref(false);
   const rootReady = ref(false);

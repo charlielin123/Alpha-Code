@@ -28,8 +28,8 @@ export default (el: HTMLInputElement, bind: DirectiveBinding, vNode: VNode) => {
   const borderTop = inner?.offsetTop || 0;
   const borderLeft = inner?.offsetLeft || 0;
 
-  el.style.setProperty('top',(window.innerHeight-el.offsetHeight)/2+'px');
-  el.style.setProperty('left',(window.innerWidth-el.offsetWidth)/2+'px');
+  // el.style.setProperty('top',(window.innerHeight-el.offsetHeight)/2+'px');
+  // el.style.setProperty('left',(window.innerWidth-el.offsetWidth)/2+'px');
 
   let f11 = false;
   const initDrag = (event: MouseEvent) => {
