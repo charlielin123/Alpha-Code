@@ -8,7 +8,7 @@ import DatePicker from '@/components/datePicker/test.vue';
 import App from './App.vue';
 import router from './router';
 
-const app = createApp(DatePicker);
+const app = createApp(App);
 
 app.use(createPinia());
 app.use(router);

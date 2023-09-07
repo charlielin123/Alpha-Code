@@ -125,7 +125,7 @@ onMounted(() => {
         v-resize
         v-click-out-side="
           () => {
-            close();
+            props.backDrop && close();
           }
         "
         v-if="modelValue"
