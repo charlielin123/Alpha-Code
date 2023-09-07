@@ -56,3 +56,37 @@ export function getCookie(name: string) {
 export function deleteCookie(name: string) {
   document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 }
+
+const addComboKeyListener = (keys: string[], func: Function, overTime: number) => {
+  // const obj: { [key: string]: boolean } = {};
+  const obj: Array<string | null> = [];
+  const refresh = () => {
+    const t = setTimeout(() => {
+      obj.length = 0;
+      clearTimeout(t);
+    }, overTime ?? 500);
+  };
+  document.addEventListener('keydown', (e) => {
+    if (!keys.includes(e.key)) {
+      obj.length = 0;
+      return;
+    }
+    for (const index in keys) {
+      if (e.key == keys[index] && obj.length == parseInt(index)) {
+        obj.push(e.key);
+        if (obj.length == keys.length) {
+          func();
+          return;
+        }
+        refresh();
+      }
+    }
+  });
+};
+addComboKeyListener(
+  ['c', 'h', 'a', 'r', 'l', 'i', 'e'],
+  () => {
+    alert();
+  },
+  1500
+);
