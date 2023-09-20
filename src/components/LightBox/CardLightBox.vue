@@ -58,7 +58,7 @@ const b = computed<number | undefined>({
           type="textarea"
           placeholder="請輸入內容"
           style="height: 18rem"
-          :disabled="!canEdit"
+          :readonly="!canEdit"
           @click="canEdit = true"
           @blur="
             () => {
@@ -70,7 +70,7 @@ const b = computed<number | undefined>({
           title="點擊以編輯"
         />
         <p>期限：</p>
-        <n-date-picker v-model:value="b" @update:value【="editCard(mirrorCard)" />
+        <n-date-picker v-model:value="b" @update:value="editCard(mirrorCard)" />
       </div>
     </template>
     <template #footer>

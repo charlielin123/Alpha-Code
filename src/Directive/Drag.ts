@@ -12,28 +12,42 @@ export default (el: HTMLInputElement, bind: DirectiveBinding, vNode: VNode) => {
   let startY = 0;
   let startTop = 0;
   let startLeft = 0;
-
-  let startHeight = vNode.props?.style?.height ?? el.offsetHeight + 'px';
-  let startWidth = vNode.props?.style?.width ?? el.offsetWidth + 'px';
+  let startHeight = el?.style?.height ?? el.offsetHeight + 'px';
+  let startWidth = el?.style?.width ?? el.offsetWidth + 'px';
   let dragBar = bind.value;
-  let inner = bind.value?.inner;
+  let arg: unknown = bind.arg;
+  let containerEle: HTMLElement | null = null;
+  if (arg instanceof HTMLElement) {
+    containerEle = arg;
+  } else {
+    containerEle = document.querySelector(('#' + arg) as string);
+  }
   if (!(dragBar instanceof HTMLElement)) {
     dragBar = document.querySelector(dragBar);
   }
   if (!dragBar) return;
   dragBar.style.cursor = 'move';
 
-  const maxHeight = inner?.clientHeight || window.innerHeight;
-  const maxWidth = inner?.clientWidth || window.innerWidth;
-  const borderTop = inner?.offsetTop || 0;
-  const borderLeft = inner?.offsetLeft || 0;
-  const temp: { top: number; left: number } = { top: 0, left: 0 };
-  let flag = true;
+  let maxHeight = containerEle?.clientHeight || window.innerHeight;
+  let maxWidth = containerEle?.clientWidth || window.innerWidth;
+  const borderTop = containerEle?.offsetTop || 0;
+  const borderLeft = containerEle?.offsetLeft || 0;
+  const defaultStyle = {
+    maxHeight: el.style?.maxHeight,
+    maxWidth: el.style?.maxWidth,
+    width: el.style?.width,
+    height: el.style?.height
+  };
+  const tempStyle = {
+    height: el.style?.height,
+    width: el.style?.width
+  };
+  // const temp: { top: number; left: number } = { top: borderTop, left: borderLeft };
+  let isSizeChange = false;
+  el.style.setProperty('top', (maxHeight - el.offsetHeight) / 2 + 'px');
+  el.style.setProperty('left', (maxWidth - el.offsetWidth) / 2 + 'px');
 
-  el.style.setProperty('top', (window.innerHeight - el.offsetHeight) / 2 + 'px');
-  el.style.setProperty('left', (window.innerWidth - el.offsetWidth) / 2 + 'px');
-
-  let f11 = false;
+  let isFullSize = false;
   const initDrag = (event: MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
@@ -42,6 +56,12 @@ export default (el: HTMLInputElement, bind: DirectiveBinding, vNode: VNode) => {
     startY = event.clientY;
     startTop = el.offsetTop;
     startLeft = el.offsetLeft;
+    maxHeight = containerEle?.offsetHeight || window.innerHeight;
+    maxWidth = containerEle?.offsetWidth || window.innerWidth;
+    if (!isFullSize) {
+      startHeight = el.offsetHeight + 'px';
+      startWidth = el.offsetWidth + 'px';
+    }
     document.addEventListener('mousemove', drag);
     document.addEventListener('mouseup', stopDrag);
   };
@@ -52,19 +72,37 @@ export default (el: HTMLInputElement, bind: DirectiveBinding, vNode: VNode) => {
    */
   const drag = (event: MouseEvent) => {
     if (!dragging) return;
-    // console.log(startTop, startLeft);
     const deltaX = event.clientX - startX;
     const deltaY = event.clientY - startY;
-    if (f11 && deltaY > 10) {
+    /**
+     * 最大化要變小時
+     */
+    if (isFullSize && deltaY > 6) {
       el.style.width = startWidth;
       el.style.height = startHeight;
-      const x = dragBar.offsetWidth / 2;
+      
+      el.style.setProperty('max-width', defaultStyle.maxWidth);
+      el.style.setProperty('max-height', defaultStyle.maxHeight);
+      el.style.setProperty('width', defaultStyle.width);
+      el.style.setProperty('height', defaultStyle.height);
+      if (isSizeChange) {
+        el.style.setProperty('width', tempStyle.width);
+        el.style.setProperty('height', tempStyle.height);
+      }
+      const x = el.offsetWidth / 2;
       const y = dragBar.offsetHeight / 2;
-      startTop = event.clientY - y;
+      startTop = event.clientY - startY;
+      if (startTop > event.clientY - y || startTop < event.clientY - y * 2) {
+        startTop = event.clientY - y;
+      }
       startLeft = event.clientX - x;
-      el.style.setProperty('top', temp.top + 'px');
-      el.style.setProperty('left', temp.left + 'px');
-      f11 = false;
+      if (event.clientX < el.offsetWidth / 2) {
+        startLeft = borderLeft;
+      }
+      if (event.clientX > maxWidth - el.offsetWidth / 2) {
+        startLeft = maxWidth - el.offsetWidth;
+      }
+      isFullSize = false;
       return;
     }
 
@@ -75,21 +113,32 @@ export default (el: HTMLInputElement, bind: DirectiveBinding, vNode: VNode) => {
       top = maxHeight - el.clientHeight;
     }
     if (left <= 10) {
-      left = 0;
+      left = borderLeft;
     }
     if (left + 10 > maxWidth - el.clientWidth) {
       left = maxWidth - el.clientWidth;
     }
-    if (top <= 10) {
-      if (f11 == false) {
-        temp.top = el.offsetTop;
-        temp.left = el.offsetLeft;
-        f11 = true;
+
+    if (top <= 5) {
+      /**
+       * 進行最大化
+       */
+      if (isFullSize == false) {
+        el.style.setProperty('max-width', maxWidth + 'px');
+        el.style.setProperty('max-height', maxHeight + 'px');
+        tempStyle.height = el.style.height;
+        tempStyle.width = el.style.width;
+        isFullSize = true;
+        if (el.style.width != defaultStyle.width && el.style.height != defaultStyle.height) {
+          console.log(el.style.width, el.style.height);
+          console.log(defaultStyle.width, defaultStyle.height);
+          isSizeChange = true;
+        }
       }
-      top = 0;
-      left = 0;
-      el.style.width = '100vw';
-      el.style.height = '100vh';
+      top = borderTop;
+      left = borderLeft;
+      el.style.width = plusPx(maxWidth);
+      el.style.height = plusPx(maxHeight);
     }
 
     el.style.top = plusPx(top);
@@ -98,7 +147,6 @@ export default (el: HTMLInputElement, bind: DirectiveBinding, vNode: VNode) => {
 
   const stopDrag = () => {
     dragging = false;
-    console.log(temp);
     document.removeEventListener('mousemove', drag);
     document.removeEventListener('mouseup', stopDrag);
   };

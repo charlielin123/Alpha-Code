@@ -1,7 +1,7 @@
 import { type } from 'os';
 import type { DirectiveBinding, VNode } from 'vue';
 
-export default (el: HTMLInputElement, bind: DirectiveBinding, vNode: VNode) => {
+export default (el: HTMLElement, bind: DirectiveBinding, vNode: VNode) => {
   let resizing = false;
   let resizeDirection: string;
   let startX = 0;
@@ -12,6 +12,7 @@ export default (el: HTMLInputElement, bind: DirectiveBinding, vNode: VNode) => {
   let startHeight = 0;
   let windowWidth = 0;
   let windowHeight = 0;
+  const defaultPosition = el.style.position;
   const initResize = (e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -39,7 +40,7 @@ export default (el: HTMLInputElement, bind: DirectiveBinding, vNode: VNode) => {
     'bottomLeft',
     'bottomRight'
   ];
-  el.style.position = 'fixed';
+  // el.style.position = 'absolute';
   let wrap = document.createElement('div');
   wrap.style.position = 'absolute';
   wrap.style.top = '0';
@@ -57,9 +58,9 @@ export default (el: HTMLInputElement, bind: DirectiveBinding, vNode: VNode) => {
     for (const key in mixCss) {
       ele.style.setProperty(key, mixCss[key]);
     }
-    wrap.appendChild(ele);
+    el.appendChild(ele);
   }
-  el.appendChild(wrap);
+  // el.prepend(wrap);
   const resize = (event: MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
