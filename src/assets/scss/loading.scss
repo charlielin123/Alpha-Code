@@ -1,0 +1,61 @@
+$boxSize:60px;
+$dotSize:10px;
+$dotQuantity:12;
+.loadingContainer{
+  overflow:visible;
+  width: $boxSize;
+  height: $boxSize;
+  border-radius: 50%;
+  margin: 50px auto;
+  position: relative;
+  animation: rotate 6s linear reverse infinite;
+
+  .dot{
+    position: absolute;
+    top: 0;
+    top:  calc( 0px - $dotSize / 2);
+    left: calc(50% - $dotSize / 2);
+    width: $dotSize;
+    height: $dotSize;
+    background-color: rgb(219, 219, 219);
+    border-radius: 50%;
+    transform-origin:center calc(($boxSize + $dotSize) / 2);
+    animation: loading 2s linear alternate infinite ;
+    @for $i from 1 through $dotQuantity{
+      &:nth-child(#{$i}){
+        --temp: #{calc(360deg / $dotQuantity * $i)};
+        transform: rotate(calc(360deg / $dotQuantity * $i));
+        animation-delay: calc(-2s / $dotQuantity * $i);
+      }
+    }
+  }
+
+}
+
+@keyframes loading{
+  50%{
+    width: calc(1.5 * $dotSize);
+    height: calc(1.5* $dotSize);
+    top:  calc( 0px - 1.5 * $dotSize / 2);
+    left: calc(50% - 1.5 * $dotSize / 2);
+    transform-origin:center calc(($boxSize + $dotSize * 1.5) / 2);
+    background-color: rgba(24, 141, 13, 0.5);
+  }
+  100%{
+    width: $dotSize;
+    height: $dotSize;
+    top:  calc( 0px - $dotSize / 2);
+    left: calc(50% - $dotSize / 2);
+    transform-origin:center calc(($boxSize + $dotSize) / 2);
+
+    // transform: scale(1) rotate(var(--temp));
+  }
+}
+@keyframes rotate{
+  50%{
+    transform: rotate(180deg);
+  }
+  100%{
+    transform: rotate(360deg);
+  }
+}

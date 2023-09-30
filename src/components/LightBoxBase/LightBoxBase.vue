@@ -10,6 +10,7 @@ export default {
 import { computed, onMounted, ref, type Ref, type StyleValue, type VNode } from 'vue';
 import { useMessage } from '@/components';
 import clickOutSide from '@/Directive/clickOutSide';
+import loading from '../loading.vue';
 
 interface Props {
   modelValue: boolean;
@@ -50,7 +51,6 @@ const close = () => {
   emit('close');
   emit('update:modelValue', false);
 };
-defineExpose({ close });
 
 const box = ref<HTMLElement | null>(null);
 const modalElement = ref<HTMLElement | null>(null);
@@ -88,12 +88,27 @@ const outsideZIndex = computed(() => {
 });
 
 const disBack = ref(false);
+const isLoading = ref(false);
+const load = {
+  start() {
+    isLoading.value = true;
+  },
+  end() {
+    isLoading.value = false;
+  },
+  async api(func: () => Promise<void>) {
+    isLoading.value = true;
+    await func();
+    isLoading.value = false;
+  }
+};
 
 onMounted(() => {
   // onClickOutSide(modalElement.value, () => {
   //   console.log("123")
   // })
 });
+defineExpose({ load, close });
 </script>
 
 <template>
@@ -141,6 +156,7 @@ onMounted(() => {
         </div>
 
         <div class="lightBoxBody" :style="body_style">
+          <loading v-if="isLoading"></loading>
           <slot name="body"></slot>
         </div>
         <div justify="end" class="footer" v-if="!dis_footer">
@@ -154,6 +170,13 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
+.loading {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .outSideContainer {
   width: 100vw;
   height: 100vh;
